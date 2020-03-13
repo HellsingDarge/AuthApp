@@ -1,20 +1,7 @@
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        printHelp()
-        exitProcess(1)
-    }
-
-    if (args[0] == "-h" || args[0].isBlank()) {
-        printHelp()
-        exitProcess(1)
-    }
-
-    if (args.size == 1 && args[0] != "-h") {
-        printHelp()
-        exitProcess(0)
-    }
+    var authSuccessful = false
 
     if (isAuthNeeded(args)) {
         val login = args[1]
@@ -22,11 +9,34 @@ fun main(args: Array<String>) {
 
         if (!validateLogin(login) || !validatePass(pass))
             exitProcess(2)
+
+        val currentUser = User(login, pass)
+
+        if (!currentUser.exists())
+            exitProcess(3)
+
+        if (!currentUser.verifyPass())
+            exitProcess(4)
+
+        authSuccessful = true
     }
 
+    if (isHelpNeeded(args)) {
+        printHelp()
+        if (!authSuccessful)
+            exitProcess(1)
+    }
 }
 
-fun isAuthNeeded(args: Array<String>) = args[0] == "-login" && args[2] == "-pass"
+private fun isHelpNeeded(args: Array<String>): Boolean {
+    if (args.isEmpty())
+        return true
+    if (args.contains("-h"))
+        return true
+    return false
+}
+
+fun isAuthNeeded(args: Array<String>) = args.size >= 4 && args[0] == "-login" && args[2] == "-pass"
 fun validateLogin(login: String) = login.length <= 10 && login.all { it.isLowerCase() }
 fun validatePass(pass: String) = pass.isNotEmpty()
 

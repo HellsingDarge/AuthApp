@@ -17,7 +17,7 @@ function testcase {
     echo -e "${YELLOW}$PURPOSE${NC}"
     echo "$ARGS"
 
-    java -jar out/artifacts/AuthApp_jar/AuthApp.jar "$ARGS"
+    java -jar out/artifacts/AuthApp_jar/AuthApp.jar $ARGS
 
     RES=$?
 
@@ -40,8 +40,8 @@ testcase "-h" 1 "#T1.2: R1.8 Печать справки"
 #T1.3
 testcase "-bla" 0 "#T1.3: R1.8 Печать справки"
 
-## Аунтентификация
-##T2.1
+# Аунтентификация
+#T2.1
 testcase "-login sasha -pass 123" 0 "T2.1: R1.9, R1.8 Успешная Аунтентификация U1"
 ##T2.2
 testcase "-pass 123 -login sasha" 0 "T2.2: R1.9, R1.10 Успешная Аунтентификация U1"
@@ -52,7 +52,7 @@ testcase "-login SA12 -pass 123" 2 "T2.4: R1.9 Неверный формат, л
 ##T2.5
 testcase "-login   -pass pass" 2 "T2.5: R1.9 Неверный формат, логин пустой"
 ##T2.6
-testcase "-login abashkirova -pass pass" 2 "T2.6: R1.9 Неверный формат, логин больше 10 символов"
+testcase "-login abcdqwertyqwerty -pass pass" 2 "T2.6: R1.9 Неверный формат, логин больше 10 символов"
 ##T2.7
 testcase "-login vasya -pass 123" 3 "T2.7: R1.9 Невеизвестный логин"
 ##T2.8
@@ -64,9 +64,9 @@ testcase "-login admin -pass qwerty" 0 "T2.10: R1.9 Успешная Аунте�
 ##T2.11
 testcase "-login q -pass @#$%^&*!" 0 "T2.11: R1.9 Успешная Аунтентификация U3"
 ##T2.12
-testcase "-login aleksandra -pass abc" 0 "T2.12: R1.9 Успешная Аунтентификация U4"
+testcase "-login abcdefghij -pass abc" 0 "T2.12: R1.9 Успешная Аунтентификация U4"
 ##T2.13
-testcase "-h -login aleksandra -pass abc" 0 "T2.13: R1.9 R1.9 Аунтентификация при дополнительном вызове справки"
+testcase "-h -login abcdefghij -pass abc" 0 "T2.13: R1.9 R1.9 Аунтентификация при дополнительном вызове справки"
 
 ## Авторизация
 #
