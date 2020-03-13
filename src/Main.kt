@@ -1,16 +1,20 @@
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    val argHandler = ArgHandler(args)
     var authSuccessful = false
 
     if (isAuthNeeded(args)) {
-        val login = args[1]
-        val pass = args[3]
+        val login = argHandler.login
+        val pass = argHandler.pass
 
-        if (!validateLogin(login) || !validatePass(pass))
+        if (!validateLogin(login))
             exitProcess(2)
 
-        val currentUser = User(login, pass)
+        if (pass == null || !validatePass(pass))
+            exitProcess(4)
+
+        val currentUser = User(login!!, pass)
 
         if (!currentUser.exists())
             exitProcess(3)
@@ -36,9 +40,9 @@ private fun isHelpNeeded(args: Array<String>): Boolean {
     return false
 }
 
-fun isAuthNeeded(args: Array<String>) = args.size >= 4 && args[0] == "-login" && args[2] == "-pass"
-fun validateLogin(login: String) = login.length <= 10 && login.all { it.isLowerCase() }
-fun validatePass(pass: String) = pass.isNotEmpty()
+fun isAuthNeeded(args: Array<String>) = args.contains("-pass") && args.contains("-login")
+fun validateLogin(login: String?) = login != null && login.length <= 10 && login.all { it.isLowerCase() }
+fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
 fun printHelp() {
     println(
