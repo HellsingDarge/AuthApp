@@ -11,11 +11,24 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    if (args[0] != "-h") {
+    if (args.size == 1 && args[0] != "-h") {
         printHelp()
         exitProcess(0)
     }
+
+    if (isAuthNeeded(args)) {
+        val login = args[1]
+        val pass = args[3]
+
+        if (!validateLogin(login) || !validatePass(pass))
+            exitProcess(2)
+    }
+
 }
+
+fun isAuthNeeded(args: Array<String>) = args[0] == "-login" && args[2] == "-pass"
+fun validateLogin(login: String) = login.length <= 10 && login.all { it.isLowerCase() }
+fun validatePass(pass: String) = pass.isNotEmpty()
 
 fun printHelp() {
     println(
@@ -30,5 +43,4 @@ fun printHelp() {
         -vol <int> - объём работы, натуральное число
     """.trimIndent()
     )
-
 }
