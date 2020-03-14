@@ -1,3 +1,3 @@
 enum class Role {
-    READ, WTITE, EXECUTE
+    READ, WRITE, EXECUTE
 }
