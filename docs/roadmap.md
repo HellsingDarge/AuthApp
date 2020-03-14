@@ -151,11 +151,11 @@
     `haveAccess(res: String, role: String)` 
     (проверяем, что user.login equal sasha && role equal READ && res equal A), код 6 
 2. Добавить функцию валидации роли `validateRole(role: String)`, код 5 - R1.5, R1.8.4
-3. Создать функцию, проверяющую существует ли такой ресурс в списке `resourceExist(res: String): Boolean` 
+3. Создать перечисление `enum Role` c READ, WRITE, EXECUTE R1.3, R1.5
+4. Создать `data class UsersResources` (R1.3, R1.6) с полями `path: String`, `role: Role`, `user: User` 
+5. Создать функцию, проверяющую существует ли такой ресурс в списке `resourceExist(res: String): Boolean` 
 (проверяем, что res equal A), код 6 — R1.9
-4. Создать функцию, проверяющую доступ к потомку по родителю `haveParentAccess(res: String, role: String)` - R1.4
-5. Создать перечисление `enum Role` c READ, WRITE, EXECUTE R1.3, R1.5
-6. Создать `data class UsersResources` (R1.3, R1.6) с полями `path: String`, `role: Role`, `user: User` 
+6. Создать функцию, проверяющую доступ к потомку по родителю `haveParentAccess(res: String, role: String)` - R1.4
 7. Создать список ресурсов с тестовыми данными
 8. Добавить функцию в `ArgHandler`, проверяющую необходима ли авторизация `authorizationIsNeeded(): Boolean`
 9. Добавить в `ArgHandler` поля `-res`, `-role`
