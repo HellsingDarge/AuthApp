@@ -1,7 +1,9 @@
 class ArgHandler(private val args: Array<String>) {
     enum class Arguments(val value: String?) {
         LOGIN("-login"),
-        PASSWORD("-pass")
+        PASSWORD("-pass"),
+        RESOURCE("-res"),
+        ROLE("-role")
     }
 
     fun canTryAuth() = args.contains(Arguments.LOGIN.value) && args.contains(Arguments.PASSWORD.value)
