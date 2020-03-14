@@ -29,35 +29,18 @@ fun main(args: Array<String>) {
 
         if (authSuccessful && argHandler.canTryAuthorization()) {
             val resource = argHandler.getArgument(ArgHandler.Arguments.RESOURCE)
-            val role = argHandler.getArgument(ArgHandler.Arguments.ROLE)
+            val roleInput = argHandler.getArgument(ArgHandler.Arguments.ROLE)
 
-            if (!validateRole(role))
+            if (roleInput != null && !validateRole(roleInput)) {
                 exitProcess(ExitCode.UNKNOWN_ROLE.value)
+            }
+            if (roleInput != null && resource != null) {
+                val authorizationService = AuthorizationService(currentUser.login, resource, Role.valueOf(roleInput))
 
-            val resources = listOf(
-                UsersResources("A", Role.READ, authService.getUserByLogin("sasha")!!),
-                UsersResources("A.AA", Role.WRITE, authService.getUserByLogin("sasha")!!),
-                UsersResources("A.AA.AAA", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
-                UsersResources("B", Role.EXECUTE, authService.getUserByLogin("admin")!!),
-                UsersResources("A.B", Role.WRITE, authService.getUserByLogin("admin")!!),
-                UsersResources("A.B", Role.WRITE, authService.getUserByLogin("sasha")!!),
-                UsersResources("A.B.C", Role.READ, authService.getUserByLogin("admin")!!),
-                UsersResources("A.B.C", Role.WRITE, authService.getUserByLogin("q")!!),
-                UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("q")!!),
-                UsersResources("B", Role.READ, authService.getUserByLogin("q")!!),
-                UsersResources("A.AA.AAA", Role.READ, authService.getUserByLogin("q")!!),
-                UsersResources("A", Role.EXECUTE, authService.getUserByLogin("q")!!),
-                UsersResources("A", Role.WRITE, authService.getUserByLogin("admin")!!),
-                UsersResources("A.AA", Role.EXECUTE, authService.getUserByLogin("admin")!!),
-                UsersResources("B", Role.WRITE, authService.getUserByLogin("sasha")!!),
-                UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
-                UsersResources("A.B.C", Role.EXECUTE, authService.getUserByLogin("sasha")!!)
-            ).filter { it.user == currentUser }
-
-            if (resource != null && role != null && !haveAccess(resources, resource, role))
-                exitProcess(ExitCode.NO_ACCESS.value)
-
-            authorizationSuccessful = true
+                if (!authorizationService.haveAccess())
+                    exitProcess(ExitCode.NO_ACCESS.value)
+                authorizationSuccessful = true
+            }
         }
     }
 
@@ -72,37 +55,7 @@ fun main(args: Array<String>) {
 fun validateLogin(login: String?) = login != null && login.length <= 10 && login.all { it.isLowerCase() }
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
-
-/**
- * Работает для отфильтрованных ресурсов по конкретному пользователю
- * Если найдено прямое совпадение ресурса и роли — доступ найден и выдан
- * Иначе, последовательно ищем от корня дерева подходящий доступ
- */
-fun haveAccess(resources: List<UsersResources>, res: String, role: String): Boolean {
-    if (isFoundedResourceWithRole(resources, res, role)) {
-        return true
-    }
-    val nodesOfResources = res.split(".")
-    var currentNode = nodesOfResources.first()
-
-    for (index in nodesOfResources.indices) {
-        if (isFoundedResourceWithRole(resources, currentNode, role)) {
-            return true
-        } else {
-            val childNode = nodesOfResources.getOrNull(index) ?: return false
-            currentNode = "$currentNode.$childNode"
-        }
-    }
-    return false
-}
-
-private fun isFoundedResourceWithRole(
-    resources: List<UsersResources>,
-    res: String,
-    role: String
-) = resources.filter { it.path == res }.any { it.role.name == role }
-
-fun validateRole(role: String?) = role != null && listOf("READ", "WRITE", "EXECUTE").contains(role)
+fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role)
 
 fun printHelp() {
     println(
