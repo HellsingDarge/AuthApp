@@ -2,45 +2,38 @@ import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val argHandler = ArgHandler(args)
+    val authService = AuthService()
     var authSuccessful = false
 
-    if (isAuthNeeded(args)) {
-        val login = argHandler.login
-        val pass = argHandler.pass
+    if (argHandler.canTryAuth()) {
+        val login = argHandler.getArgument(ArgHandler.Arguments.LOGIN)
+        val pass = argHandler.getArgument(ArgHandler.Arguments.PASSWORD)
 
         if (!validateLogin(login))
-            exitProcess(2)
+            exitProcess(ExitCode.INVALID_LOGIN_FORMAT.value)
 
         if (pass == null || !validatePass(pass))
-            exitProcess(4)
+            exitProcess(ExitCode.INVALID_PASSWORD.value)
 
-        val currentUser = User(login!!, pass)
+        val currentUser = authService.getUserByLogin(login!!)
 
-        if (!currentUser.exists())
-            exitProcess(3)
+        if (!authService.userExists(currentUser))
+            exitProcess(ExitCode.UNKNOWN_LOGIN.value)
 
-        if (!currentUser.verifyPass())
-            exitProcess(4)
+        if (!authService.verifyPass(pass, currentUser!!))
+            exitProcess(ExitCode.INVALID_PASSWORD.value)
 
         authSuccessful = true
     }
 
-    if (isHelpNeeded(args)) {
+    if (argHandler.shouldPrintHelp()) {
         printHelp()
         if (!authSuccessful)
-            exitProcess(1)
+            exitProcess(ExitCode.HELP.value)
     }
 }
 
-private fun isHelpNeeded(args: Array<String>): Boolean {
-    if (args.isEmpty())
-        return true
-    if (args.contains("-h"))
-        return true
-    return false
-}
 
-fun isAuthNeeded(args: Array<String>) = args.contains("-pass") && args.contains("-login")
 fun validateLogin(login: String?) = login != null && login.length <= 10 && login.all { it.isLowerCase() }
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
@@ -57,4 +50,11 @@ fun printHelp() {
         -vol <int> - объём работы, натуральное число
     """.trimIndent()
     )
+}
+
+enum class ExitCode(val value: Int) {
+    HELP(1),
+    INVALID_LOGIN_FORMAT(2),
+    UNKNOWN_LOGIN(3),
+    INVALID_PASSWORD(4)
 }
