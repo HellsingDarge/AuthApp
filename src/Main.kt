@@ -38,6 +38,7 @@ fun validateLogin(login: String?) = login != null && login.length <= 10 && login
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
 fun haveAccess(res: String, role: String) = res == "A" && role == "READ"
+fun validateRole(role: String) = listOf("READ", "WRITE", "EXECUTE").contains("READ")
 
 fun printHelp() {
     println(
