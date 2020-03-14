@@ -27,25 +27,30 @@ fun main(args: Array<String>) {
         authSuccessful = true
     }
 
-    val res = listOf(
-        UsersResources("A", Role.READ, authService.getUserByLogin("sasha")!!),
-        UsersResources("A.AA", Role.WRITE, authService.getUserByLogin("sasha")!!),
-        UsersResources("A.AA.AAA", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
-        UsersResources("B", Role.EXECUTE, authService.getUserByLogin("admin")!!),
-        UsersResources("A.B", Role.WRITE, authService.getUserByLogin("admin")!!),
-        UsersResources("A.B", Role.WRITE, authService.getUserByLogin("sasha")!!),
-        UsersResources("A.B.C", Role.READ, authService.getUserByLogin("admin")!!),
-        UsersResources("A.B.C", Role.WRITE, authService.getUserByLogin("q")!!),
-        UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("q")!!),
-        UsersResources("B", Role.READ, authService.getUserByLogin("q")!!),
-        UsersResources("A.AA.AAA", Role.READ, authService.getUserByLogin("q")!!),
-        UsersResources("A", Role.EXECUTE, authService.getUserByLogin("q")!!),
-        UsersResources("A", Role.WRITE, authService.getUserByLogin("admin")!!),
-        UsersResources("A.AA", Role.EXECUTE, authService.getUserByLogin("admin")!!),
-        UsersResources("B", Role.WRITE, authService.getUserByLogin("sasha")!!),
-        UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
-        UsersResources("A.B.C", Role.EXECUTE, authService.getUserByLogin("sasha")!!)
-    )
+    val authorizationSuccessful = false
+    if (authSuccessful && argHandler.canTryAuthorization()) {
+
+        val res = listOf(
+            UsersResources("A", Role.READ, authService.getUserByLogin("sasha")!!),
+            UsersResources("A.AA", Role.WRITE, authService.getUserByLogin("sasha")!!),
+            UsersResources("A.AA.AAA", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
+            UsersResources("B", Role.EXECUTE, authService.getUserByLogin("admin")!!),
+            UsersResources("A.B", Role.WRITE, authService.getUserByLogin("admin")!!),
+            UsersResources("A.B", Role.WRITE, authService.getUserByLogin("sasha")!!),
+            UsersResources("A.B.C", Role.READ, authService.getUserByLogin("admin")!!),
+            UsersResources("A.B.C", Role.WRITE, authService.getUserByLogin("q")!!),
+            UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("q")!!),
+            UsersResources("B", Role.READ, authService.getUserByLogin("q")!!),
+            UsersResources("A.AA.AAA", Role.READ, authService.getUserByLogin("q")!!),
+            UsersResources("A", Role.EXECUTE, authService.getUserByLogin("q")!!),
+            UsersResources("A", Role.WRITE, authService.getUserByLogin("admin")!!),
+            UsersResources("A.AA", Role.EXECUTE, authService.getUserByLogin("admin")!!),
+            UsersResources("B", Role.WRITE, authService.getUserByLogin("sasha")!!),
+            UsersResources("A.B", Role.EXECUTE, authService.getUserByLogin("sasha")!!),
+            UsersResources("A.B.C", Role.EXECUTE, authService.getUserByLogin("sasha")!!)
+        )
+    }
+
 
     if (argHandler.shouldPrintHelp()) {
         printHelp()
