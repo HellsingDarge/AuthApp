@@ -37,6 +37,8 @@ fun main(args: Array<String>) {
 fun validateLogin(login: String?) = login != null && login.length <= 10 && login.all { it.isLowerCase() }
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
+fun haveAccess(res: String, role: String) = res == "A" && role == "READ"
+
 fun printHelp() {
     println(
         """
