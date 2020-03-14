@@ -73,10 +73,34 @@ fun validateLogin(login: String?) = login != null && login.length <= 10 && login
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
 
-//Отфильтрованные ресурсы для конкретного пользователя
+/**
+ * Работает для отфильтрованных ресурсов по конкретному пользователю
+ * Если найдено прямое совпадение ресурса и роли — доступ найден и выдан
+ * Иначе, последовательно ищем от корня дерева подходящий доступ
+ */
 fun haveAccess(resources: List<UsersResources>, res: String, role: String): Boolean {
-    return resources.filter { it.path == res }.any { it.role.name == role }
+    if (isFoundedResourceWithRole(resources, res, role)) {
+        return true
+    }
+    val nodesOfResources = res.split(".")
+    var currentNode = nodesOfResources.first()
+
+    for (index in nodesOfResources.indices) {
+        if (isFoundedResourceWithRole(resources, currentNode, role)) {
+            return true
+        } else {
+            val childNode = nodesOfResources.getOrNull(index) ?: return false
+            currentNode = "$currentNode.$childNode"
+        }
+    }
+    return false
 }
+
+private fun isFoundedResourceWithRole(
+    resources: List<UsersResources>,
+    res: String,
+    role: String
+) = resources.filter { it.path == res }.any { it.role.name == role }
 
 fun validateRole(role: String?) = role != null && listOf("READ", "WRITE", "EXECUTE").contains(role)
 
