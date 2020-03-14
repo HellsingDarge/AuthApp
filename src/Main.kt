@@ -29,6 +29,8 @@ fun main(args: Array<String>) {
 
     val authorizationSuccessful = false
     if (authSuccessful && argHandler.canTryAuthorization()) {
+        if (!validateRole(argHandler.getArgument(ArgHandler.Arguments.ROLE)))
+            exitProcess(ExitCode.UNKNOWN_ROLE.value)
 
         val res = listOf(
             UsersResources("A", Role.READ, authService.getUserByLogin("sasha")!!),
@@ -51,7 +53,6 @@ fun main(args: Array<String>) {
         )
     }
 
-
     if (argHandler.shouldPrintHelp()) {
         printHelp()
         if (!authSuccessful)
@@ -64,7 +65,7 @@ fun validateLogin(login: String?) = login != null && login.length <= 10 && login
 fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
 fun haveAccess(res: String, role: String) = res == "A" && role == "READ"
-fun validateRole(role: String) = listOf("READ", "WRITE", "EXECUTE").contains("READ")
+fun validateRole(role: String?) = role != null && listOf("READ", "WRITE", "EXECUTE").contains(role)
 
 fun printHelp() {
     println(
@@ -85,5 +86,6 @@ enum class ExitCode(val value: Int) {
     HELP(1),
     INVALID_LOGIN_FORMAT(2),
     UNKNOWN_LOGIN(3),
-    INVALID_PASSWORD(4)
+    INVALID_PASSWORD(4),
+    UNKNOWN_ROLE(5)
 }
