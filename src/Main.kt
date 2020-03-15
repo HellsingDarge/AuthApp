@@ -1,4 +1,7 @@
+import kotlin.system.exitProcess
+
 fun main(args: Array<String>) {
     val app = Application(args)
-    app.run()
+    val returnCode = app.run()
+    exitProcess(returnCode)
 }

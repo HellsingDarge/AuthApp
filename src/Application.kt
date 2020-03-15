@@ -1,16 +1,15 @@
 import ExitCode.*
-import kotlin.system.exitProcess
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
     private val authService = AuthService()
 
-    fun run() {
+    fun run(): Int {
         if (argHandler.canTryAuthentication()) {
             val authenticationResult = startAuthentication()
             val authenticationCode = authenticationResult.first
             if (authenticationCode != SUCCESS) {
-                exitProcess(authenticationResult.first.value)
+                return authenticationResult.first.value
             }
 
             val isAuthorization =
@@ -19,18 +18,16 @@ class Application(args: Array<String>) {
             val currentUser = authenticationResult.second
 
             if (!isAuthorization || currentUser == null) {
-                exitProcess(authenticationCode.value)
+                return authenticationCode.value
             } else {
                 val authorizationResult = startAuthorization(currentUser)
                 val authorizationCode = authorizationResult.first
-                exitProcess(authorizationCode.value)
+                return authorizationCode.value
             }
         }
 
-        if (argHandler.shouldPrintHelp()) {
-            printHelp()
-            exitProcess(HELP.value)
-        }
+        printHelp()
+        return HELP.value
     }
 
     private fun startAuthentication(): Pair<ExitCode, User?> {
