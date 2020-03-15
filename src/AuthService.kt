@@ -25,6 +25,7 @@ class AuthService {
     )
 
     fun getUserByLogin(login: String) = _users.find { it.login == login }
+
     fun verifyPass(pass: String, user: User) = user.hash == generateHash(pass, user.salt)
 
     private fun generateHash(plaintext: String, salt: String) =

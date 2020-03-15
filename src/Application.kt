@@ -87,7 +87,8 @@ class Application(args: Array<String>) {
     private fun validateLogin(login: String?): Boolean {
         return login != null && login.matches(Regex("[a-z]{1,10}"))
     }
-    private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
-    private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
 
+    private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
+
+    private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
 }
