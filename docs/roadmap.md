@@ -109,11 +109,11 @@
 1. Написать `main` c параметрами командной строки (R1.8)
 2. Написать фукнцию, проверяющую наличие аргументов `argsAreNotEmpty(args: Array<String>)`
 3. Создать метод печати справки `printHelp()` и `System.exit(1)` (R1.8.1, R1.8.2, R1.8.6)
-4. Создать функцию, проверяющую необходима ли справка `helpIsNeeded(args: Array<String>): Boolean` (`arg[0] equal "-h"`)
+4. Создать функцию, проверяющую необходима ли справка `shouldPrintHelp(args: Array<String>): Boolean` (`arg[0] equal "-h"`)
 5. Печатать во всех остальных случаях справку и код 0 (`System.exit(0)`)
 
 ## Этап 3: Аутентификация пользователя (R1.1)
-1. Создать функцию, проверяющую надо ли аутентифицировать `authenticationIsNeeded(args: Array<String>): Boolean`
+1. Создать функцию, проверяющую надо ли аутентифицировать `canTryAuth(args: Array<String>): Boolean`
 (args[0] equal -login && args[2] equal -path)
 2. Создать функцию, валидирующую надо логин `validateLogin(login: String): Boolean`
 (проверяем формат через regexp `[a-z]{1,10}`, код 2 ) - R1.9, R1.8.3
@@ -126,15 +126,15 @@
 7. Отефакторить методы на работу с коллекцией пользователей
 8. Создать класс `ArgHandler` (поля-аргументы `-h`, `-login`, `-pass`) для разбора параметров c функцией `getValue(key: String): String?` — R1.10
 9. Перенести функции в `ArgHandler`:
-     - `helpIsNeeded(args: Array<String>): Boolean`, 
-     - `authenticationIsNeeded(args: Array<String>): Boolean`
+     - `shouldPrintHelp(): Boolean`, 
+     - `canTryAuthentication(): Boolean`
 10. Отрефакторим код, чтобы использовать `ArgHandler`
 11. Создать класс `AuthenticationService` для аутентификации пользователя по логину и паролю - R1.1
     1. Перенести коллекцию пользователей в класс
     2. Перенести функции
         - `validateUserLogin(login: String): Boolean`
-        - `findUser(user: User)`
-        - `validatePassForLogin(pass: String, login: String): Boolean`
+        - `getUserByLogin(login: String): User`
+        - `verifyPass(pass: String, user: User): Boolean`
 12. Создать класс `HelpHandler`
     1. Перенести функцию печати справки в класс `HelpHandler`
     2. Отрефакторить код на работу с классом `HelpHandler`
@@ -151,22 +151,23 @@
     `haveAccess(res: String, role: String)` 
     (проверяем, что user.login equal sasha && role equal READ && res equal A), код 6 
 2. Добавить функцию валидации роли `validateRole(role: String)`, код 5 - R1.5, R1.8.4
-3. Создать функцию, проверяющую существует ли такой ресурс в списке `resourceExist(res: String): Boolean` 
-(проверяем, что res equal A), код 6 — R1.9
-4. Создать функцию, проверяющую доступ к потомку по родителю `haveParentAccess(res: String, role: String)` - R1.4
-5. Создать перечисление `enum Role` c READ, WRITE, EXECUTE R1.3, R1.5
-6. Создать `data class UsersResources` (R1.3, R1.6) с полями `path: String`, `role: Role`, `user: User` 
-7. Создать список ресурсов с тестовыми данными
-8. Добавить функцию в `ArgHandler`, проверяющую необходима ли авторизация `authorizationIsNeeded(): Boolean`
+    (проверяем что роль одна из списка)
+3. Создать перечисление `enum Role` c READ, WRITE, EXECUTE R1.3, R1.5
+4. Создать `data class UsersResources` (R1.3, R1.6) с полями `path: String`, `role: Role`, `user: User` 
+5. Создать список ресурсов с тестовыми данными
+6. ~~Создать функцию, проверяющую существует ли такой ресурс в списке `resourceExist(res: String): Boolean` 
+(проверяем, что res equal A), код 6 — R1.9~~
+7. ~~Создать функцию, проверяющую доступ к потомку по родителю `haveParentAccess(res: String, role: String)` - R1.4~~
+8. Добавить функцию в `ArgHandler`, проверяющую необходима ли авторизация `canTryAuthorization(): Boolean`
 9. Добавить в `ArgHandler` поля `-res`, `-role`
 10. Отрефакторить функции на работу с коллекцией 
 11. Создать класс `AuthorizationService` (R1.3)
     1. Создать функцию поиск ресурса `getResourceRolesBy(path: String): List<Role>` 
     (найдет для этого user все возможные доступы, например для sasha по ресурсу A.AA вернется список A.AA-Write, A - Read)
     2. Перенести функции в класс:
-        - `haveParentAccess(res: String, role: String)`
+        - ~~`haveParentAccess(res: String, role: String)`~~
         - `haveAccess(res: String, role: String): Boolean`
-        - `resourceExist(res: String): Boolean`
+        - ~~`resourceExist(res: String): Boolean`~~
     3. Перенести список тестовых данных
 12. Создать класс `Application` - R1.11
     1. Создать метод `printHelp()` 
@@ -174,6 +175,7 @@
     3. Создать функцию для шага авторизации `startAuthorization(user: User, res: String, role: String): Int`
     4. Написать функцию, выбирающую последовательность действий `run()` (справка или сценарий авторизации)
     (проверяем нужна ли справка, проверяем нужно ли аутентифицировать и/или авторизовывать)
+13. Добавить `enum class ExitCode(val value: Int)` с классификацией всех ошибок выхода
 
 ## Этап 5: Аккаунтинг (R1.7)
 1. Добавить функцию в `ArgHandler`, проверяющую необходим ли аккаунтинг `accountingIsNeeded(): Boolean`
