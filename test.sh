@@ -75,13 +75,13 @@ testcase "-login sasha -pass 123 -role READ -res A" 0 "T3.1: R1.3, R1.8, R1.9 У
 ##T3.2
 testcase "-login sasha -pass 123 -role DELETE -res A" 5 "T3.2: R1.8, R1.9 Неизвестная роль"
 ##T3.3
-testcase "-login sasha -pass 123 -role WRITE -res A" 6 "T3.3: R1.8, R1.9 Нет доступа (ресурс есть)"
+testcase "-login sasha -pass 123 -role Write -res A" 6 "T3.3: R1.8, R1.9 Нет доступа (ресурс есть)"
 ##T3.4
 testcase "-login sasha -pass 123 -role write -res a.b.c" 6 "T3.4: R1.8, R1.9 Нет доступа (ресур не найден)"
 ##T3.5
 testcase "-login sasha -pass 123 -role READ -res A.B" 0 "T3.5: R1.6 Доступ к потомкам"
 ##T3.6
-testcase "-login sasha -pass 123 -role READ -res A.B.C.D" 0 "T3.6: R1.6, R1.3, R1.8, R1.9 Доступ к потомкам"
+testcase "-login sasha -pass 123 -role ReAd -res A.B.C.D" 0 "T3.6: R1.6, R1.3, R1.8, R1.9 Доступ к потомкам"
 ##T3.7
 testcase "-login admin -pass qwerty -role EXECUTE -res A.AA" 0 "T3.7: R1.3, R1.8, R1.9 Успешный доступ"
 ##T3.8
