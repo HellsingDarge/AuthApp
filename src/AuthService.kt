@@ -24,7 +24,6 @@ class AuthService {
         )
     )
 
-    fun userExists(user: User?) = _users.contains(user)
     fun getUserByLogin(login: String) = _users.find { it.login == login }
     fun verifyPass(pass: String, user: User) = user.hash == generateHash(pass, user.salt)
 

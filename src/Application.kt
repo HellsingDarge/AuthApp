@@ -6,7 +6,7 @@ class Application(args: Array<String>) {
     private val authService = AuthService()
 
     fun run() {
-        if (argHandler.canTryAuth()) {
+        if (argHandler.canTryAuthentication()) {
             val authenticationResult = startAuthentication()
             val authenticationCode = authenticationResult.first
             if (authenticationCode != SUCCESS) {
@@ -85,7 +85,7 @@ class Application(args: Array<String>) {
     }
 
     private fun validateLogin(login: String?): Boolean {
-        return login != null && login.length <= 10 && login.all { it.isLowerCase() }
+        return login != null && login.matches(Regex("[a-z]{1,10}"))
     }
     private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
     private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())

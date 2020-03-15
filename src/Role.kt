@@ -1,3 +1,3 @@
-enum class Role(value: String) {
-    READ("READ"), WRITE("WRITE"), EXECUTE("EXECUTE")
+enum class Role {
+    READ, WRITE, EXECUTE
 }
