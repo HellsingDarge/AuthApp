@@ -59,7 +59,7 @@ class Application(args: Array<String>) {
         if (!validateRole(roleInput)) {
             return Pair(UNKNOWN_ROLE, null)
         }
-        val usersResource = UsersResources(resource, Role.valueOf(roleInput), user.login)
+        val usersResource = UsersResources(resource, Role.valueOf(roleInput.toUpperCase()), user.login)
         val authorizationService = AuthorizationService(usersResource)
 
         return if (authorizationService.haveAccess()) {
@@ -68,7 +68,6 @@ class Application(args: Array<String>) {
             Pair(NO_ACCESS, null)
         }
     }
-
 
     private fun printHelp() {
         println(
@@ -89,6 +88,6 @@ class Application(args: Array<String>) {
         return login != null && login.length <= 10 && login.all { it.isLowerCase() }
     }
     private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
-    private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role)
+    private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
 
 }

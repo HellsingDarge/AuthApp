@@ -17,12 +17,12 @@ function testcase {
     echo -e "${YELLOW}$PURPOSE${NC}"
     echo "$ARGS"
 
-    java -jar out/artifacts/AuthApp_jar/AuthApp.jar $ARGS
+    java -jar app.jar ${ARGS}
 
     RES=$?
 
     (("TESTS_RUN+=1"))
-    if [ $RES -eq "$EXPECTED_CODE" ]; then
+    if [[ ${RES} -eq "$EXPECTED_CODE" ]]; then
         echo -e "${GREEN}✅  Test passed${NC}"
         (("TEST_SUCCESS+=1"))
     else
@@ -66,7 +66,7 @@ testcase "-login q -pass @#$%^&*!" 0 "T2.11: R1.9 Успешная Аунтен�
 ##T2.12
 testcase "-login abcdefghij -pass abc" 0 "T2.12: R1.9 Успешная Аунтентификация U4"
 ##T2.13
-testcase "-h -login abcdefghij -pass abc" 0 "T2.13: R1.9 R1.9 Аунтентификация при дополнительном вызове справки"
+testcase "-h -login abcdefghij -pass abc" 0 "T2.13: R1.9 R1.10 Аунтентификация при дополнительном вызове справки"
 
 ## Авторизация
 #
@@ -77,7 +77,7 @@ testcase "-login sasha -pass 123 -role DELETE -res A" 5 "T3.2: R1.8, R1.9 Неи
 ##T3.3
 testcase "-login sasha -pass 123 -role WRITE -res A" 6 "T3.3: R1.8, R1.9 Нет доступа (ресурс есть)"
 ##T3.4
-testcase "-login sasha -pass 123 -role WRITE -res a.b.c" 6 "T3.4: R1.8, R1.9 Нет доступа (ресур не найден)"
+testcase "-login sasha -pass 123 -role write -res a.b.c" 6 "T3.4: R1.8, R1.9 Нет доступа (ресур не найден)"
 ##T3.5
 testcase "-login sasha -pass 123 -role READ -res A.B" 0 "T3.5: R1.6 Доступ к потомкам"
 ##T3.6
@@ -85,7 +85,7 @@ testcase "-login sasha -pass 123 -role READ -res A.B.C.D" 0 "T3.6: R1.6, R1.3, R
 ##T3.7
 testcase "-login admin -pass qwerty -role EXECUTE -res A.AA" 0 "T3.7: R1.3, R1.8, R1.9 Успешный доступ"
 ##T3.8
-testcase "-login admin -pass qwerty -role EXECUTE -res A.B" 6 "T3.8: R1.3, R1.8, R1.9 Доступ к брату"
+testcase "-login admin -pass qwerty -role execute -res A.B" 6 "T3.8: R1.3, R1.8, R1.9 Доступ к брату"
 ##T3.9
 testcase "-login q -pass @#$%^&*! -role READ" 0 "T3.9: R1.1, R1.8, R1.9 Успешная аутентификация"
 ##T3.10
@@ -93,9 +93,9 @@ testcase "-login q -pass 1234 -role DELETE -res A.B" 4 "T3.10: R1.1, R1.8, R1.9 
 ##T3.11
 testcase "-login q -pass @#$%^&*! -role READ -res A.AA.AAA" 0 "T3.11: R1.3 Успешный доступ"
 ##T3.12
-testcase "-login q -pass @#$%^&*! -role READ -res A.AA" 6 "T3.12: R1.8, R1.9 Нет доступа (выше узла)"
+testcase "-login q -pass @#$%^&*! -role read -res A.AA" 6 "T3.12: R1.8, R1.9 Нет доступа (выше узла)"
 ##T3.13
-testcase "-role -res -login sasha -pass 123" 0 "T3.13: R1.3, R1.10 - Успешный доступ, порядок аргументов"
+testcase "-role READ -res A -login sasha -pass 123" 0 "T3.13: R1.3, R1.10 - Успешный доступ, порядок аргументов"
 
 ## Аккаунтинг
 #
