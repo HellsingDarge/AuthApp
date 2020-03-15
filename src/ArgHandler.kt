@@ -8,7 +8,7 @@ class ArgHandler(private val args: Array<String>) {
 
     fun canTryAuthentication() = args.contains(Arguments.LOGIN.value) && args.contains(Arguments.PASSWORD.value)
 
-    fun canTryAuthorization(): Boolean = args.contains(Arguments.RESOURCE.value) && args.contains(Arguments.ROLE.value)
+    fun canTryAuthorization() = args.contains(Arguments.RESOURCE.value) && args.contains(Arguments.ROLE.value)
 
     fun getArgument(arg: Arguments) = tryGetArg(args.indexOf(arg.value))
 
