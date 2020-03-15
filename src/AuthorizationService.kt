@@ -1,23 +1,23 @@
 class AuthorizationService(val usersResource: UsersResources) {
 
     private var resources: List<UsersResources> = listOf(
-        UsersResources(path = "A", role = Role.READ, login = "sasha"),
-        UsersResources(path = "A.AA", role = Role.WRITE, login = "sasha"),
-        UsersResources(path = "A.AA.AAA", role = Role.EXECUTE, login = "sasha"),
-        UsersResources(path = "B", role = Role.EXECUTE, login = "admin"),
-        UsersResources(path = "A.B", role = Role.WRITE, login = "admin"),
-        UsersResources(path = "A.B", role = Role.WRITE, login = "sasha"),
-        UsersResources(path = "A.B.C", role = Role.READ, login = "admin"),
-        UsersResources(path = "A.B.C", role = Role.WRITE, login = "q"),
-        UsersResources(path = "A.B", role = Role.EXECUTE, login = "q"),
-        UsersResources(path = "B", role = Role.READ, login = "q"),
-        UsersResources(path = "A.AA.AAA", role = Role.READ, login = "q"),
-        UsersResources(path = "A", role = Role.EXECUTE, login = "q"),
-        UsersResources(path = "A", role = Role.WRITE, login = "admin"),
-        UsersResources(path = "A.AA", role = Role.EXECUTE, login = "admin"),
-        UsersResources(path = "B", role = Role.WRITE, login = "sasha"),
-        UsersResources(path = "A.B", role = Role.EXECUTE, login = "sasha"),
-        UsersResources(path = "A.B.C", role = Role.EXECUTE, login = "sasha")
+        UsersResources("A", Role.READ, "sasha"),
+        UsersResources("A.AA", Role.WRITE, "sasha"),
+        UsersResources("A.AA.AAA", Role.EXECUTE, "sasha"),
+        UsersResources("B", Role.EXECUTE, "admin"),
+        UsersResources("A.B", Role.WRITE, "admin"),
+        UsersResources("A.B", Role.WRITE, "sasha"),
+        UsersResources("A.B.C", Role.READ, "admin"),
+        UsersResources("A.B.C", Role.WRITE, "q"),
+        UsersResources("A.B", Role.EXECUTE, "q"),
+        UsersResources("B", Role.READ,"q"),
+        UsersResources("A.AA.AAA", Role.READ, "q"),
+        UsersResources("A", Role.EXECUTE, "q"),
+        UsersResources("A", Role.WRITE, "admin"),
+        UsersResources("A.AA", Role.EXECUTE, "admin"),
+        UsersResources("B", Role.WRITE, "sasha"),
+        UsersResources("A.B", Role.EXECUTE, "sasha"),
+        UsersResources("A.B.C", Role.EXECUTE, "sasha")
     )
 
     /**
@@ -26,14 +26,14 @@ class AuthorizationService(val usersResource: UsersResources) {
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
     fun haveAccess(): Boolean {
-        if (haveResourceWithRole(resources = resources, res = usersResource.path, role = usersResource.role)) {
+        if (haveResourceWithRole(resources,usersResource.path, usersResource.role)) {
             return true
         }
         val nodesOfResources = usersResource.path.split(".")
         var currentNode = nodesOfResources.first()
         nodesOfResources.dropLast(1)
         for (index in nodesOfResources.indices) {
-            if (haveResourceWithRole(resources = resources, res = currentNode, role = usersResource.role)) {
+            if (haveResourceWithRole(resources, currentNode,usersResource.role)) {
                 return true
             } else {
                 val childNode = nodesOfResources.getOrNull(index) ?: return false
