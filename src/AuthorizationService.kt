@@ -1,6 +1,6 @@
 class AuthorizationService {
 
-    constructor(login: String, resource: String, role: Role) {
+    constructor(usersResource: UsersResources) {
         this.resources = listOf(
             UsersResources("A", Role.READ, "sasha"),
             UsersResources("A.AA", Role.WRITE, "sasha"),
@@ -20,16 +20,12 @@ class AuthorizationService {
             UsersResources("A.B", Role.EXECUTE, "sasha"),
             UsersResources("A.B.C", Role.EXECUTE, "sasha")
         )
-        resources = resources.filter { it.login == login }
-        this.login = login
-        this.resource = resource
-        this.role = role
+        resources = resources.filter { it.login == usersResource.login }
+        this.usersResource = usersResource
     }
 
     private var resources: List<UsersResources>
-    private val login: String
-    private val resource: String
-    private val role: Role
+    val usersResource: UsersResources
 
     /**
      * Работает для отфильтрованных ресурсов по конкретному пользователю
@@ -37,14 +33,15 @@ class AuthorizationService {
      * Иначе, последовательно ищем от корня дерева подходящий доступ
      */
     fun haveAccess(): Boolean {
-        if (isFoundedResourceWithRole(resources, resource, role)) {
+
+        if (isFoundedResourceWithRole(resources, usersResource.path, usersResource.role)) {
             return true
         }
-        val nodesOfResources = resource.split(".")
+        val nodesOfResources = usersResource.path.split(".")
         var currentNode = nodesOfResources.first()
 
         for (index in nodesOfResources.indices) {
-            if (isFoundedResourceWithRole(resources, currentNode, role)) {
+            if (isFoundedResourceWithRole(resources, currentNode, usersResource.role)) {
                 return true
             } else {
                 val childNode = nodesOfResources.getOrNull(index) ?: return false
