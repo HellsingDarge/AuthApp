@@ -26,14 +26,14 @@ class AuthorizationService(val usersResource: UsersResources) {
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
     fun haveAccess(): Boolean {
-        if (isFoundedResourceWithRole(resources = resources, res = usersResource.path, role = usersResource.role)) {
+        if (haveResourceWithRole(resources = resources, res = usersResource.path, role = usersResource.role)) {
             return true
         }
         val nodesOfResources = usersResource.path.split(".")
         var currentNode = nodesOfResources.first()
         nodesOfResources.dropLast(1)
         for (index in nodesOfResources.indices) {
-            if (isFoundedResourceWithRole(resources = resources, res = currentNode, role = usersResource.role)) {
+            if (haveResourceWithRole(resources = resources, res = currentNode, role = usersResource.role)) {
                 return true
             } else {
                 val childNode = nodesOfResources.getOrNull(index) ?: return false
@@ -43,7 +43,7 @@ class AuthorizationService(val usersResource: UsersResources) {
         return false
     }
 
-    private fun isFoundedResourceWithRole(
+    private fun haveResourceWithRole(
         resources: List<UsersResources>,
         res: String,
         role: Role
