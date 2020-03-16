@@ -18,5 +18,7 @@ class ArgHandler(private val args: Array<String>) {
 
     fun getArgument(arg: Arguments) = tryGetArg(args.indexOf(arg.value))
 
+    fun shouldPrintHelp() = args.isEmpty() || args.contains("-h")
+
     private fun tryGetArg(index: Int) = args.getOrNull(index + 1)
 }

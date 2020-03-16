@@ -1,6 +1,7 @@
 import ExitCode.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.*
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
@@ -25,22 +26,25 @@ class Application(args: Array<String>) {
 
             val authorizationResult = startAuthorization(currentUser)
             if (authorizationResult.first != SUCCESS)
-                return authenticationResult.first.value
+                return authorizationResult.first.value
 
-
+            authService.currentUser = currentUser
         }
 
         if (argHandler.canTryAccounting()) {
-            val dateStartInp = argHandler.getArgument(ArgHandler.Arguments.DATE_START) ?: return INVALID_ACTIVITY.value
-            val dateEndInp = argHandler.getArgument(ArgHandler.Arguments.DATE_END) ?: return INVALID_ACTIVITY.value
-            val volumeInp = argHandler.getArgument(ArgHandler.Arguments.VOLUME) ?: return INVALID_ACTIVITY.value
+            val dateStartInp = argHandler.getArgument(ArgHandler.Arguments.DATE_START)
+            val dateEndInp = argHandler.getArgument(ArgHandler.Arguments.DATE_END)
+            val volumeInp = argHandler.getArgument(ArgHandler.Arguments.VOLUME)
+
+            if (dateStartInp == null || dateEndInp == null || volumeInp == null)
+                return SUCCESS.value
 
             try {
                 val dateStart = parseDate(dateStartInp)
                 val dateEnd = parseDate(dateEndInp)
                 val volume = volumeInp.toInt()
 
-                if (dateStart.before(dateEnd) || volume < 1)
+                if (dateStart.after(dateEnd) || volume < 1)
                     return INVALID_ACTIVITY.value
 
             } catch (e: Exception) {
@@ -51,8 +55,12 @@ class Application(args: Array<String>) {
             }
         }
 
-        printHelp()
-        return HELP.value
+        if (argHandler.shouldPrintHelp()) {
+            printHelp()
+            return HELP.value
+        }
+
+        return SUCCESS.value
     }
 
     private fun startAuthentication(): Pair<ExitCode, User?> {
@@ -114,5 +122,9 @@ class Application(args: Array<String>) {
 
     private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
 
-    private fun parseDate(date: String) = SimpleDateFormat("yyyy-MM-dd").parse(date)
+    private fun parseDate(date: String): Date {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        formatter.isLenient = false
+        return formatter.parse(date)
+    }
 }
