@@ -1,4 +1,6 @@
 import ExitCode.*
+import java.text.ParseException
+import java.text.SimpleDateFormat
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
@@ -19,10 +21,33 @@ class Application(args: Array<String>) {
 
             if (!isAuthorization || currentUser == null) {
                 return authenticationCode.value
-            } else {
-                val authorizationResult = startAuthorization(currentUser)
-                val authorizationCode = authorizationResult.first
-                return authorizationCode.value
+            }
+
+            val authorizationResult = startAuthorization(currentUser)
+            if (authorizationResult.first != SUCCESS)
+                return authenticationResult.first.value
+
+
+        }
+
+        if (argHandler.canTryAccounting()) {
+            val dateStartInp = argHandler.getArgument(ArgHandler.Arguments.DATE_START) ?: return INVALID_ACTIVITY.value
+            val dateEndInp = argHandler.getArgument(ArgHandler.Arguments.DATE_END) ?: return INVALID_ACTIVITY.value
+            val volumeInp = argHandler.getArgument(ArgHandler.Arguments.VOLUME) ?: return INVALID_ACTIVITY.value
+
+            try {
+                val dateStart = parseDate(dateStartInp)
+                val dateEnd = parseDate(dateEndInp)
+                val volume = volumeInp.toInt()
+
+                if (dateStart.before(dateEnd) || volume < 1)
+                    return INVALID_ACTIVITY.value
+
+            } catch (e: Exception) {
+                when (e) {
+                    is NumberFormatException, is ParseException -> return INVALID_ACTIVITY.value
+                    else -> throw e
+                }
             }
         }
 
@@ -88,4 +113,6 @@ class Application(args: Array<String>) {
     private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
     private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
+
+    private fun parseDate(date: String) = SimpleDateFormat("yyyy-MM-dd").parse(date)
 }
