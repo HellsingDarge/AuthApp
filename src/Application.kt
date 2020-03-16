@@ -128,7 +128,7 @@ class Application(args: Array<String>) {
 
     private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
 
-    private fun validateRole(role: String?) = listOf("READ", "WRITE", "EXECUTE").contains(role?.toUpperCase())
+    private fun validateRole(role: String?) = role != null && listOf("READ", "WRITE", "EXECUTE").contains(role)
 
     private fun parseDate(date: String): Date {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
