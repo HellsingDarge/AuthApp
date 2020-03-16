@@ -75,17 +75,17 @@ testcase "-login sasha -pass 123 -role READ -res A" 0 "T3.1: R1.3, R1.8, R1.9 У
 ##T3.2
 testcase "-login sasha -pass 123 -role DELETE -res A" 5 "T3.2: R1.8, R1.9 Неизвестная роль"
 ##T3.3
-testcase "-login sasha -pass 123 -role Write -res A" 6 "T3.3: R1.8, R1.9 Нет доступа (ресурс есть)"
+testcase "-login sasha -pass 123 -role WRITE -res A" 6 "T3.3: R1.8, R1.9 Нет доступа (ресурс есть)"
 ##T3.4
-testcase "-login sasha -pass 123 -role write -res a.b.c" 6 "T3.4: R1.8, R1.9 Нет доступа (ресур не найден)"
+testcase "-login sasha -pass 123 -role WRITE -res a.b.c" 6 "T3.4: R1.8, R1.9 Нет доступа (ресур не найден)"
 ##T3.5
 testcase "-login sasha -pass 123 -role READ -res A.B" 0 "T3.5: R1.6 Доступ к потомкам"
 ##T3.6
-testcase "-login sasha -pass 123 -role ReAd -res A.B.C.D" 0 "T3.6: R1.6, R1.3, R1.8, R1.9 Доступ к потомкам"
+testcase "-login sasha -pass 123 -role READ -res A.B.C.D" 0 "T3.6: R1.6, R1.3, R1.8, R1.9 Доступ к потомкам"
 ##T3.7
 testcase "-login admin -pass qwerty -role EXECUTE -res A.AA" 0 "T3.7: R1.3, R1.8, R1.9 Успешный доступ"
 ##T3.8
-testcase "-login admin -pass qwerty -role execute -res A.B" 6 "T3.8: R1.3, R1.8, R1.9 Доступ к брату"
+testcase "-login admin -pass qwerty -role EXECUTE -res A.B" 6 "T3.8: R1.3, R1.8, R1.9 Доступ к брату"
 ##T3.9
 testcase "-login q -pass @#$%^&*! -role READ" 0 "T3.9: R1.1, R1.8, R1.9 Успешная аутентификация"
 ##T3.10
@@ -93,9 +93,13 @@ testcase "-login q -pass 1234 -role DELETE -res A.B" 4 "T3.10: R1.1, R1.8, R1.9 
 ##T3.11
 testcase "-login q -pass @#$%^&*! -role READ -res A.AA.AAA" 0 "T3.11: R1.3 Успешный доступ"
 ##T3.12
-testcase "-login q -pass @#$%^&*! -role read -res A.AA" 6 "T3.12: R1.8, R1.9 Нет доступа (выше узла)"
+testcase "-login q -pass @#$%^&*! -role READ -res A.AA" 6 "T3.12: R1.8, R1.9 Нет доступа (выше узла)"
 ##T3.13
 testcase "-role READ -res A -login sasha -pass 123" 0 "T3.13: R1.3, R1.10 - Успешный доступ, порядок аргументов"
+##T3.14
+testcase "-login sasha -pass 123 -role Write -res A" 5 "T3.14: R1.5, R1.9 Неправильная роль"
+##T3.15
+testcase "-login sasha -pass 123 -role write -res A" 5 "T3.14: R1.5, R1.9 Неправильная роль"
 
 ## Аккаунтинг
 #
@@ -124,9 +128,9 @@ testcase "-login q -pass @#$%^&*! -role WRITE -res A.B.C -de 2000-02-15 -vol 10"
 ##T4.12
 testcase "-login q -pass @#$%^&*! -role WRITE -res A.B.C -ds 2000-01-15 -de 2000-02-15" 0 "T4.12: R1.3 Успешная авторизация(не передан vol)"
 ##T4.13
-testcase "-login q -pass @#$%^&*! -role DELETE -res A.B.C -ds 2000-01-15 -de 2000-02-15" 0 "T4.13: R1.1 Успешная аутентификация(не передан vol, несуществующая роль)"
+testcase "-login q -pass @#$%^&*! -role DELETE -res A.B.C -ds 2000-01-15 -de 2000-02-15" 5 "T4.13: R1.1 Успешная аутентификация(не передан vol, несуществующая роль)"
 ##T4.14
-testcase "-login q -pass !@#$% -role WRITE -res A.B.C -ds 2000-01-15 -de 2000-02-15" 2 "T4.14: R1.1 Неверный пароль"
+testcase "-login q -pass !@#$% -role WRITE -res A.B.C -ds 2000-01-15 -de 2000-02-15" 4 "T4.14: R1.1 Неверный пароль"
 ##T4.15
 testcase "-res A.B.C -ds 2000-01-15 -vol 10 -login q -pass @#$%^&*! -role WRITE" 0 "T4.15: R1.10 Успешный аккаунитнг, Порядок параметров"
 ##T4.16

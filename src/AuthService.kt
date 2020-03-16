@@ -28,6 +28,8 @@ class AuthService {
 
     fun verifyPass(pass: String, user: User) = user.hash == generateHash(pass, user.salt)
 
+    lateinit var currentUser: User
+
     private fun generateHash(plaintext: String, salt: String) =
         MessageDigest.getInstance("SHA-256")
             .digest((plaintext + salt).toByteArray())

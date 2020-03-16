@@ -5,5 +5,6 @@ enum class ExitCode(val value: Int) {
     UNKNOWN_LOGIN(3),
     INVALID_PASSWORD(4),
     UNKNOWN_ROLE(5),
-    NO_ACCESS(6)
+    NO_ACCESS(6),
+    INVALID_ACTIVITY(7)
 }
