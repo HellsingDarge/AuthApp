@@ -97,7 +97,7 @@ testcase "-login q -pass @#$%^&*! -role READ -res A.AA" 6 "T3.12: R1.8, R1.9 Н�
 ##T3.13
 testcase "-role READ -res A -login sasha -pass 123" 0 "T3.13: R1.3, R1.10 - Успешный доступ, порядок аргументов"
 ##T3.14
-testcase "-login sasha -pass 123 -role WRITE -res A" 5 "T3.14: R1.5, R1.9 Неизвестная роль"
+testcase "-login sasha -pass 123 -role Write -res A" 5 "T3.14: R1.5, R1.9 Неправильная роль"
 ##T3.15
 testcase "-login sasha -pass 123 -role write -res A" 5 "T3.14: R1.5, R1.9 Неправильная роль"
 
