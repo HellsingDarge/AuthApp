@@ -6,6 +6,7 @@ import java.util.*
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
     private val authService = AuthService()
+    private val accountService = AccountingService()
 
     fun run(): Int {
         if (argHandler.canTryAuthentication()) {
@@ -46,6 +47,13 @@ class Application(args: Array<String>) {
 
                 if (dateStart.after(dateEnd) || volume < 1)
                     return INVALID_ACTIVITY.value
+
+                accountService.write(
+                    UserSession(
+                        authService.currentUser, argHandler.getArgument(ArgHandler.Arguments.RESOURCE)!!,
+                        dateStart, dateEnd, volume
+                    )
+                )
 
             } catch (e: Exception) {
                 when (e) {
