@@ -17,7 +17,7 @@ function testcase {
     echo -e "${YELLOW}$PURPOSE${NC}"
     echo "$ARGS"
 
-    java -jar app.jar ${ARGS}
+    ./run.sh ${ARGS}
 
     RES=$?
 
