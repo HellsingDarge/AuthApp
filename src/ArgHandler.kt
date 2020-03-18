@@ -65,16 +65,13 @@ class ArgHandler(args: Array<String>) {
         this.volume = volume
     }
 
-    fun canTryAuthentication() = args.contains(Arguments.LOGIN.value) && args.contains(Arguments.PASSWORD.value)
+    fun canAuthentication() = !(login.isNullOrEmpty() || password.isNullOrEmpty())
 
-    fun canTryAuthorization() = args.contains(Arguments.RESOURCE.value) && args.contains(Arguments.ROLE.value)
+    fun canAuthorization() = !(resource.isNullOrEmpty() || role.isNullOrEmpty())
 
-    fun canTryAccounting() =
-        args.contains(Arguments.DATE_START.value) && args.contains(Arguments.DATE_END.value) && args.contains(Arguments.VOLUME.value)
+    fun canAccounting(): Boolean {
+        return !(dateStart.isNullOrEmpty() || dateEnd.isNullOrEmpty() || volume == null)
+    }
 
-    fun getArgument(arg: Arguments) = tryGetArg(args.indexOf(arg.value))
-
-    fun shouldPrintHelp() = args.isEmpty() || args.contains("-h")
-
-    private fun tryGetArg(index: Int) = args.getOrNull(index + 1)
+    fun shouldPrintHelp() = !canAuthentication()
 }
