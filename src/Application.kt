@@ -9,7 +9,7 @@ class Application(args: Array<String>) {
     private val accountService = AccountingService()
 
     fun run(): Int {
-        if (argHandler.canTryAuthentication()) {
+        if (argHandler.canAuthentication()) {
             val authenticationResult = startAuthentication()
             val authenticationCode = authenticationResult.first
             if (authenticationCode != SUCCESS) {
@@ -17,7 +17,7 @@ class Application(args: Array<String>) {
             }
 
             val isAuthorization =
-                argHandler.canTryAuthorization()
+                argHandler.canAuthorization()
                         && authenticationCode == SUCCESS
             val currentUser = authenticationResult.second
 
@@ -32,10 +32,10 @@ class Application(args: Array<String>) {
             authService.currentUser = currentUser
         }
 
-        if (argHandler.canTryAccounting()) {
-            val dateStartInp = argHandler.getArgument(ArgHandler.Arguments.DATE_START)
-            val dateEndInp = argHandler.getArgument(ArgHandler.Arguments.DATE_END)
-            val volumeInp = argHandler.getArgument(ArgHandler.Arguments.VOLUME)
+        if (argHandler.canAccounting()) {
+            val dateStartInp = argHandler.dateStart
+            val dateEndInp = argHandler.dateEnd
+            val volumeInp = argHandler.volume
 
             if (dateStartInp == null || dateEndInp == null || volumeInp == null)
                 return SUCCESS.value
@@ -50,7 +50,7 @@ class Application(args: Array<String>) {
 
                 accountService.write(
                     UserSession(
-                        authService.currentUser, argHandler.getArgument(ArgHandler.Arguments.RESOURCE)!!,
+                        authService.currentUser, argHandler.resource!!,
                         dateStart, dateEnd, volume
                     )
                 )
@@ -72,8 +72,8 @@ class Application(args: Array<String>) {
     }
 
     private fun startAuthentication(): Pair<ExitCode, User?> {
-        val login = argHandler.getArgument(ArgHandler.Arguments.LOGIN)
-        val pass = argHandler.getArgument(ArgHandler.Arguments.PASSWORD)
+        val login = argHandler.login
+        val pass = argHandler.password
 
         if (!validateLogin(login))
             return Pair(INVALID_LOGIN_FORMAT, null)
@@ -91,8 +91,8 @@ class Application(args: Array<String>) {
 
     private fun startAuthorization(user: User): Pair<ExitCode, UsersResources?> {
         // TODO: должно приходить уже разыменованное
-        val resource = argHandler.getArgument(ArgHandler.Arguments.RESOURCE)!!
-        val roleInput = argHandler.getArgument(ArgHandler.Arguments.ROLE)!!
+        val resource = argHandler.resource!!
+        val roleInput = argHandler.role!!
 
         if (!validateRole(roleInput)) {
             return Pair(UNKNOWN_ROLE, null)
