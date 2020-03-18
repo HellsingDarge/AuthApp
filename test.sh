@@ -17,7 +17,7 @@ function testcase {
     echo -e "${YELLOW}$PURPOSE${NC}"
     echo "$ARGS"
 
-    java -jar app.jar ${ARGS}
+    ./run.sh ${ARGS}
 
     RES=$?
 
@@ -36,9 +36,9 @@ function testcase {
 #T1.1
 testcase "" 1 "#T1.1: R1.8 Печать справки"
 #T1.2
-testcase "-h" 1 "#T1.2: R1.8 Печать справки"
+testcase "-h" 0 "#T1.2: R1.8 Печать справки"
 #T1.3
-testcase "-bla" 0 "#T1.3: R1.8 Печать справки"
+testcase "-bla" 1 "#T1.3: R1.8 Печать справки"
 
 # Аунтентификация
 #T2.1
@@ -50,7 +50,7 @@ testcase "-login SASHA -pass 123" 2 "T2.3: R1.9 Неверный формат, �
 ##T2.4
 testcase "-login SA12 -pass 123" 2 "T2.4: R1.9 Неверный формат, логин c цифрами"
 ##T2.5
-testcase "-login   -pass pass" 2 "T2.5: R1.9 Неверный формат, логин пустой"
+testcase "-login   -pass pass" 1 "T2.5: R1.9 Неверный формат, логин пустой — справка"
 ##T2.6
 testcase "-login abcdqwertyqwerty -pass pass" 2 "T2.6: R1.9 Неверный формат, логин больше 10 символов"
 ##T2.7
@@ -58,7 +58,7 @@ testcase "-login vasya -pass 123" 3 "T2.7: R1.9 Невеизвестный ло�
 ##T2.8
 testcase "-login admin -pass 1234" 4 "T2.8: R1.9 Неверный пароль"
 ##T2.9
-testcase "-login admin -pass  " 4 "T2.9: R1.9 Неверный пароль, пустой"
+testcase "-login admin -pass  " 1 "T2.9: R1.9 Неверный пароль, пустой — справка "
 ##T2.10
 testcase "-login admin -pass qwerty" 0 "T2.10: R1.9 Успешная Аунтентификация U2"
 ##T2.11
@@ -120,7 +120,7 @@ testcase "-login sasha -pass 123 -role READ -res A -ds 2120-02-15 -de 2120-01-15
 ##T4.8
 testcase "-login q -pass @#$%^&*! -role WRITE -res A.B.C -ds 2000-01-15 -de 2000-02-15 -vol 20" 0 "T4.8: R1.7,R1.8,R1.9 Успешный аккаунитнг"
 ##T4.9
-testcase "-login admin -pass qwerty -role execute -res A.AA -ds 2000-01-15 -de 2000-02-15 -vol 100" 0 "T4.9: R1.7,R1.8,R1.9 Успешный аккаунитнг"
+testcase "-login admin -pass qwerty -role EXECUTE -res A.AA -ds 2000-01-15 -de 2000-02-15 -vol 100" 0 "T4.9: R1.7,R1.8,R1.9 Успешный аккаунитнг"
 ##T4.10
 testcase "-login q -pass @#$%^&*! -role WRITE -res A.B.C -ds 2000-01-15 -vol 10" 0 "T4.10: R1.3 Успешная авторизация(не передан de)"
 ##T4.11
@@ -134,6 +134,6 @@ testcase "-login q -pass !@#$% -role WRITE -res A.B.C -ds 2000-01-15 -de 2000-02
 ##T4.15
 testcase "-res A.B.C -ds 2000-01-15 -vol 10 -login q -pass @#$%^&*! -role WRITE" 0 "T4.15: R1.10 Успешный аккаунитнг, Порядок параметров"
 ##T4.16
-testcase "-login sasha -pass 123 -role READ -res A -ds 2000-01-15 -de 2000-02-15 -vol 10.0" 7 "T4.16 R1.9 — Некорректная активность, не приводится vol"
+testcase "-login sasha -pass 123 -role READ -res A -ds 2000-01-15 -de 2000-02-15 -vol 10.6" 7 "T4.16 R1.9 — Некорректная активность, не приводится vol"
 
 echo -e "Tests run: $TESTS_RUN, Success: ${GREEN}$TEST_SUCCESS${NC}, Failures: ${RED}$TEST_FAILURES${NC}"

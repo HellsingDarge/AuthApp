@@ -1,24 +1,73 @@
-class ArgHandler(private val args: Array<String>) {
-    enum class Arguments(val value: String) {
-        LOGIN("-login"),
-        PASSWORD("-pass"),
-        RESOURCE("-res"),
-        ROLE("-role"),
-        DATE_START("-ds"),
-        DATE_END("-de"),
-        VOLUME("-vol")
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+
+class ArgHandler(args: Array<String>) {
+    val login: String?
+    val password: String?
+    val resource: String?
+    val role: String?
+    val dateStart: String?
+    val dateEnd: String?
+    val volume: String?
+
+    init {
+        val parser = ArgParser("app.jar", true)
+        val login by parser.option(
+            ArgType.String,
+            shortName = "login",
+            description = "Логин пользователя, строка, строчные буквы. Не более 10 символов"
+        )
+        val password by parser.option(
+            ArgType.String,
+            shortName = "pass",
+            description = "Пароль"
+        )
+        val resource by parser.option(
+            ArgType.String,
+            shortName = "res",
+            description = "Абсолютный путь до запрашиваемого ресурса, формат A.B.C"
+        )
+        val role by parser.option(
+            ArgType.String,
+            shortName = "role",
+            description = "Уровень доступа к ресурсу. Возможные варианты: READ, WRITE, EXECUTE"
+        )
+        val dateStart by parser.option(
+            ArgType.String,
+            shortName = "ds",
+            description = "Дата начала сессии с ресурсом, формат YYYY-MM-DD "
+        )
+        val dateEnd by parser.option(
+            ArgType.String,
+            shortName = "de",
+            description = "Дата окончания сессии с ресурсом, формат YYYY-MM-DD "
+        )
+        val volume by parser.option(
+            ArgType.String,
+            shortName = "vol",
+            description = "Потребляемый объем, целое число"
+        )
+        try {
+            parser.parse(args)
+        } catch (ex: IllegalStateException) {
+        }
+
+        this.login = login
+        this.password = password
+        this.resource = resource
+        this.role = role
+        this.dateStart = dateStart
+        this.dateEnd = dateEnd
+        this.volume = volume
     }
 
-    fun canTryAuthentication() = args.contains(Arguments.LOGIN.value) && args.contains(Arguments.PASSWORD.value)
+    fun canAuthentication() = !(login.isNullOrEmpty() || password.isNullOrEmpty())
 
-    fun canTryAuthorization() = args.contains(Arguments.RESOURCE.value) && args.contains(Arguments.ROLE.value)
+    fun canAuthorization() = !(resource.isNullOrEmpty() || role.isNullOrEmpty())
 
-    fun canTryAccounting() =
-        args.contains(Arguments.DATE_START.value) && args.contains(Arguments.DATE_END.value) && args.contains(Arguments.VOLUME.value)
+    fun canAccounting(): Boolean {
+        return !(dateStart.isNullOrEmpty() || dateEnd.isNullOrEmpty() || volume == null)
+    }
 
-    fun getArgument(arg: Arguments) = tryGetArg(args.indexOf(arg.value))
-
-    fun shouldPrintHelp() = args.isEmpty() || args.contains("-h")
-
-    private fun tryGetArg(index: Int) = args.getOrNull(index + 1)
+    fun shouldPrintHelp() = !canAuthentication()
 }

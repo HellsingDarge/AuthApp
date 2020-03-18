@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-java -jar app.jar "$@"
+java -classpath "lib/kotlinx-cli-0.2.1.jar:out/app.jar" MainKt "$@"
