@@ -54,7 +54,10 @@ class ArgHandler(args: Array<String>) {
             "vol",
             "Потребляемый объем, целое число"
         )
-        parser.parse(args)
+        try {
+            parser.parse(args)
+        } catch (ex: IllegalStateException) {
+        }
 
         this.login = login
         this.password = password
