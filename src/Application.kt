@@ -1,11 +1,16 @@
 import ExitCode.*
+import domain.UserSession
+import domain.UsersResources
+import services.AccountingService
+import services.AuthenticationService
+import services.AuthorizationService
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-    private val authenService = AuthenticationService()
+    private val authenService = AuthenticationService(users)
     private lateinit var authorService: AuthorizationService
     private val accountService = AccountingService()
 
@@ -29,7 +34,12 @@ class Application(args: Array<String>) {
             return UNKNOWN_ROLE
 
         authorService = AuthorizationService(
-            UsersResources(argHandler.resource, Role.valueOf(argHandler.role!!), authenService.currentUser.login)
+            UsersResources(
+                argHandler.resource,
+                Role.valueOf(argHandler.role!!),
+                authenService.currentUser.login
+            ),
+            resources
         )
 
         if (!authorService.haveAccess())
@@ -71,14 +81,16 @@ class Application(args: Array<String>) {
     private fun printHelp() {
         println(
             """
-            -h - напечатать эту справку
-            -login <str> - логин пользователя, формат - [a-z]{10}
-            -pas <st> - пароль, может быть любым, но как минимум 1 символ
-            -role <str> - роль (READ, WRITE, READ)
-            -res <str> - имя ресурса, полный путь заглавные буквы
-            -ds <YYYY-MM-DD> - начальная дата
-            -de <YYYY-MM-DD> - конечная дата
-            -vol <int> - объём работы, натуральное число
+            Usage: app.jar options_list
+            Options: 
+                -login -> Логин пользователя, строка, строчные буквы. Не более 10 символов { String }
+                -pass -> Пароль { String }
+                -res -> Абсолютный путь до запрашиваемого ресурса, формат A.B.C { String }
+                -role -> Уровень доступа к ресурсу. Возможные варианты: READ, WRITE, EXECUTE { String }
+                -ds -> Дата начала сессии с ресурсом, формат YYYY-MM-DD  { String }
+                -de -> Дата окончания сессии с ресурсом, формат YYYY-MM-DD  { String }
+                -vol -> Потребляемый объем, целое число { String }
+                -h -> Usage info 
             """.trimIndent()
         )
     }

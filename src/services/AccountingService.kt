@@ -1,3 +1,7 @@
+package services
+
+import domain.UserSession
+
 class AccountingService {
     private val userSessions = arrayListOf<UserSession>()
 
