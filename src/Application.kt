@@ -5,106 +5,67 @@ import java.util.*
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-    private val authService = AuthService()
+    private val authenService = AuthenticationService()
+    private lateinit var authorService: AuthorizationService
     private val accountService = AccountingService()
 
-    fun run(): Int {
-        if (argHandler.canAuthentication()) {
-            val authenticationResult = startAuthentication()
-            val authenticationCode = authenticationResult.first
-            if (authenticationCode != SUCCESS) {
-                return authenticationResult.first.value
-            }
-
-            val isAuthorization =
-                argHandler.canAuthorization()
-                        && authenticationCode == SUCCESS
-            val currentUser = authenticationResult.second
-
-            if (!isAuthorization || currentUser == null) {
-                return authenticationCode.value
-            }
-
-            val authorizationResult = startAuthorization(currentUser)
-            if (authorizationResult.first != SUCCESS)
-                return authorizationResult.first.value
-
-            authService.currentUser = currentUser
+    fun run(): ExitCode {
+        if (!argHandler.canAuthenticate()) {
+            return SUCCESS
         }
 
-        if (argHandler.canAccounting()) {
-            val dateStartInp = argHandler.dateStart
-            val dateEndInp = argHandler.dateEnd
-            val volumeInp = argHandler.volume
+        if (!isLoginValid(argHandler.login))
+            return INVALID_LOGIN_FORMAT
 
-            if (dateStartInp == null || dateEndInp == null || volumeInp == null)
-                return SUCCESS.value
+        val authenResult = authenService.start(argHandler.login!!, argHandler.password!!)
 
-            try {
-                val dateStart = parseDate(dateStartInp)
-                val dateEnd = parseDate(dateEndInp)
-                val volume = volumeInp.toInt()
+        if (authenResult != SUCCESS)
+            return authenResult
 
-                if (dateStart.after(dateEnd) || volume < 1)
-                    return INVALID_ACTIVITY.value
+        if (!argHandler.canAuthorise())
+            return SUCCESS
 
-                accountService.write(
-                    UserSession(
-                        authService.currentUser, argHandler.resource!!,
-                        dateStart, dateEnd, volume
-                    )
+        if (!isRoleValid(argHandler.role))
+            return UNKNOWN_ROLE
+
+        authorService = AuthorizationService(
+            UsersResources(argHandler.resource, Role.valueOf(argHandler.role!!), authenService.currentUser.login)
+        )
+
+        if (!authorService.haveAccess())
+            return NO_ACCESS
+
+        if (!argHandler.canAccount())
+            return SUCCESS
+
+        try {
+            val dateStart = parseDate(argHandler.dateStart!!)
+            val dateEnd = parseDate(argHandler.dateEnd!!)
+            val volume = argHandler.volume!!.toInt()
+
+            if (dateStart.after(dateEnd) || volume < 1)
+                return INVALID_ACTIVITY
+
+            accountService.write(
+                UserSession(
+                    authenService.currentUser, argHandler.resource!!,
+                    dateStart, dateEnd, volume
                 )
+            )
 
-            } catch (e: Exception) {
-                when (e) {
-                    is NumberFormatException, is ParseException -> return INVALID_ACTIVITY.value
-                    else -> throw e
-                }
+        } catch (e: Exception) {
+            when (e) {
+                is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
+                else -> throw e
             }
         }
 
         if (argHandler.shouldPrintHelp()) {
             printHelp()
-            return HELP.value
+            return HELP
         }
 
-        return SUCCESS.value
-    }
-
-    private fun startAuthentication(): Pair<ExitCode, User?> {
-        val login = argHandler.login
-        val pass = argHandler.password
-
-        if (!validateLogin(login))
-            return Pair(INVALID_LOGIN_FORMAT, null)
-
-        if (pass == null || !validatePass(pass))
-            return Pair(INVALID_PASSWORD, null)
-
-        val currentUser = authService.getUserByLogin(login!!) ?: return Pair(UNKNOWN_LOGIN, null)
-
-        if (!authService.verifyPass(pass, currentUser))
-            return Pair(INVALID_PASSWORD, null)
-
-        return Pair(SUCCESS, currentUser)
-    }
-
-    private fun startAuthorization(user: User): Pair<ExitCode, UsersResources?> {
-        // TODO: должно приходить уже разыменованное
-        val resource = argHandler.resource!!
-        val roleInput = argHandler.role!!
-
-        if (!validateRole(roleInput)) {
-            return Pair(UNKNOWN_ROLE, null)
-        }
-        val usersResource = UsersResources(resource, Role.valueOf(roleInput.toUpperCase()), user.login)
-        val authorizationService = AuthorizationService(usersResource)
-
-        return if (authorizationService.haveAccess()) {
-            Pair(SUCCESS, authorizationService.usersResource)
-        } else {
-            Pair(NO_ACCESS, null)
-        }
+        return SUCCESS
     }
 
     private fun printHelp() {
@@ -122,13 +83,9 @@ class Application(args: Array<String>) {
         )
     }
 
-    private fun validateLogin(login: String?): Boolean {
-        return login != null && login.matches(Regex("[a-z]{1,10}"))
-    }
+    private fun isLoginValid(login: String?) = !login.isNullOrBlank() && login.matches(Regex("[a-z]{1,10}"))
 
-    private fun validatePass(pass: String?) = pass != null && pass.isNotEmpty()
-
-    private fun validateRole(role: String?) = role != null && listOf("READ", "WRITE", "EXECUTE").contains(role)
+    private fun isRoleValid(role: String?) = !role.isNullOrBlank() && Role.getNames().contains(role)
 
     private fun parseDate(date: String): Date {
         val formatter = SimpleDateFormat("yyyy-MM-dd")

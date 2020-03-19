@@ -1,3 +1,7 @@
 enum class Role {
-    READ, WRITE, EXECUTE
+    READ, WRITE, EXECUTE;
+
+    companion object {
+        fun getNames() = values().map { it.name }
+    }
 }

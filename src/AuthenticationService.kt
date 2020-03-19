@@ -1,6 +1,8 @@
 import java.security.MessageDigest
 
-class AuthService {
+class AuthenticationService {
+    lateinit var currentUser: User
+
     private val _users = listOf(
         User(
             "sasha",
@@ -24,11 +26,16 @@ class AuthService {
         )
     )
 
-    fun getUserByLogin(login: String) = _users.find { it.login == login }
+    fun start(login: String, pass: String): ExitCode {
+        val user = _users.find { it.login == login } ?: return ExitCode.UNKNOWN_LOGIN
+        if (!verifyPass(pass, user)) return ExitCode.INVALID_PASSWORD
 
-    fun verifyPass(pass: String, user: User) = user.hash == generateHash(pass, user.salt)
+        currentUser = user
 
-    lateinit var currentUser: User
+        return ExitCode.SUCCESS
+    }
+
+    private fun verifyPass(pass: String, user: User) = user.hash == generateHash(pass, user.salt)
 
     private fun generateHash(plaintext: String, salt: String) =
         MessageDigest.getInstance("SHA-256")

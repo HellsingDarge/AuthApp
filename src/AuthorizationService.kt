@@ -1,5 +1,7 @@
 class AuthorizationService(val usersResource: UsersResources) {
 
+    lateinit var availableResources: UsersResources
+
     private var resources: List<UsersResources> = listOf(
         UsersResources("A", Role.READ, "sasha"),
         UsersResources("A.AA", Role.WRITE, "sasha"),
@@ -26,14 +28,20 @@ class AuthorizationService(val usersResource: UsersResources) {
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
     fun haveAccess(): Boolean {
-        if (haveResourceWithRole(resources,usersResource.path, usersResource.role)) {
+        if (usersResource.path == null)
+            return false
+
+        if (haveResourceWithRole(resources, usersResource.path, usersResource.role)) {
+            availableResources = usersResource
             return true
         }
+
         val nodesOfResources = usersResource.path.split(".")
         var currentNode = nodesOfResources.first()
         nodesOfResources.dropLast(1)
         for (index in nodesOfResources.indices) {
-            if (haveResourceWithRole(resources, currentNode,usersResource.role)) {
+            if (haveResourceWithRole(resources, currentNode, usersResource.role)) {
+                availableResources = usersResource
                 return true
             } else {
                 val childNode = nodesOfResources.getOrNull(index) ?: return false
