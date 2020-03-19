@@ -6,13 +6,15 @@ import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.AccountingService
 import ru.kafedrase.authapp.services.AuthenticationService
 import ru.kafedrase.authapp.services.AuthorizationService
+import ru.kafedrase.authapp.services.UserRepository
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-    private val authenService = AuthenticationService(users)
+    private val userRepository = UserRepository()
+    private val authenService = AuthenticationService(userRepository)
     private lateinit var authorService: AuthorizationService
     private val accountService = AccountingService()
 
