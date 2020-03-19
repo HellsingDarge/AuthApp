@@ -3,10 +3,7 @@ package ru.kafedrase.authapp
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
-import ru.kafedrase.authapp.services.AccountingService
-import ru.kafedrase.authapp.services.AuthenticationService
-import ru.kafedrase.authapp.services.AuthorizationService
-import ru.kafedrase.authapp.services.UserRepository
+import ru.kafedrase.authapp.services.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -15,6 +12,7 @@ class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
     private val userRepository = UserRepository()
     private val authenService = AuthenticationService(userRepository)
+    private lateinit var resourceRepository: ResourceRepository
     private lateinit var authorService: AuthorizationService
     private val accountService = AccountingService()
 
@@ -38,13 +36,14 @@ class Application(args: Array<String>) {
         if (!isRoleValid(argHandler.role))
             return UNKNOWN_ROLE
 
+        resourceRepository = ResourceRepository()
         authorService = AuthorizationService(
             UsersResources(
                 argHandler.resource,
                 Role.valueOf(argHandler.role!!),
                 authenService.currentUser.login
             ),
-            resources
+            resourceRepository
         )
 
         if (!authorService.haveAccess())

@@ -3,7 +3,7 @@ package ru.kafedrase.authapp.services
 import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
 
-class AuthorizationService(private val usersResource: UsersResources, private var resources: List<UsersResources>) {
+class AuthorizationService(private val usersResource: UsersResources, private var resourceRepository: ResourceRepository) {
 
     lateinit var availableResources: UsersResources
 
@@ -13,7 +13,9 @@ class AuthorizationService(private val usersResource: UsersResources, private va
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
     fun haveAccess(): Boolean {
-        if (usersResource.path == null)
+        val resources = resourceRepository.getResourcesByUserLogin(usersResource.login)
+
+        if (usersResource.path == null || resources.isEmpty())
             return false
 
         if (haveResourceWithRole(resources, usersResource.path, usersResource.role)) {
@@ -41,9 +43,5 @@ class AuthorizationService(private val usersResource: UsersResources, private va
         res: String,
         role: Role
     ) = resources.filter { it.path == res }.any { it.role == role }
-
-    init {
-        resources = resources.filter { it.login == usersResource.login }
-    }
 
 }
