@@ -1,3 +1,5 @@
+package ru.kafedrase.authapp
+
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 
@@ -61,13 +63,11 @@ class ArgHandler(args: Array<String>) {
         this.volume = volume
     }
 
-    fun canAuthentication() = !(login.isNullOrEmpty() || password.isNullOrEmpty())
+    fun canAuthenticate() = !(login.isNullOrBlank() || password.isNullOrBlank())
 
-    fun canAuthorization() = !(resource.isNullOrEmpty() || role.isNullOrEmpty())
+    fun canAuthorise() = !(resource.isNullOrEmpty() || role.isNullOrEmpty())
 
-    fun canAccounting(): Boolean {
-        return !(dateStart.isNullOrEmpty() || dateEnd.isNullOrEmpty() || volume == null)
-    }
+    fun canAccount() = !(dateStart.isNullOrEmpty() || dateEnd.isNullOrEmpty() || volume == null)
 
-    fun shouldPrintHelp() = !canAuthentication()
+    fun shouldPrintHelp() = !canAuthenticate()
 }

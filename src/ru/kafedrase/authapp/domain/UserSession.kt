@@ -1,3 +1,5 @@
+package ru.kafedrase.authapp.domain
+
 import java.util.*
 
 data class UserSession(
