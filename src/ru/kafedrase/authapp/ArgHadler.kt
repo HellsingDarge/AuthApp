@@ -1,3 +1,5 @@
+package ru.kafedrase.authapp
+
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 

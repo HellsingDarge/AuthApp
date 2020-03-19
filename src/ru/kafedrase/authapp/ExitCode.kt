@@ -1,3 +1,5 @@
+package ru.kafedrase.authapp
+
 enum class ExitCode(val value: Int) {
     SUCCESS(0),
     HELP(1),

@@ -1,7 +1,7 @@
-package services
+package ru.kafedrase.authapp.services
 
-import Role
-import domain.UsersResources
+import ru.kafedrase.authapp.Role
+import ru.kafedrase.authapp.domain.UsersResources
 
 class AuthorizationService(private val usersResource: UsersResources, private var resources: List<UsersResources>) {
 

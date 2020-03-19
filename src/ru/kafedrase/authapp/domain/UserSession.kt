@@ -1,4 +1,4 @@
-package domain
+package ru.kafedrase.authapp.domain
 
 import java.util.*
 

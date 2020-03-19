@@ -1,7 +1,7 @@
-package services
+package ru.kafedrase.authapp.services
 
-import ExitCode
-import domain.User
+import ru.kafedrase.authapp.ExitCode
+import ru.kafedrase.authapp.domain.User
 import java.security.MessageDigest
 
 class AuthenticationService(private val users: List<User>) {

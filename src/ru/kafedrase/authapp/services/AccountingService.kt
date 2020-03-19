@@ -1,6 +1,6 @@
-package services
+package ru.kafedrase.authapp.services
 
-import domain.UserSession
+import ru.kafedrase.authapp.domain.UserSession
 
 class AccountingService {
     private val userSessions = arrayListOf<UserSession>()

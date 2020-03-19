@@ -1,9 +1,11 @@
-import ExitCode.*
-import domain.UserSession
-import domain.UsersResources
-import services.AccountingService
-import services.AuthenticationService
-import services.AuthorizationService
+package ru.kafedrase.authapp
+
+import ru.kafedrase.authapp.ExitCode.*
+import ru.kafedrase.authapp.domain.UserSession
+import ru.kafedrase.authapp.domain.UsersResources
+import ru.kafedrase.authapp.services.AccountingService
+import ru.kafedrase.authapp.services.AuthenticationService
+import ru.kafedrase.authapp.services.AuthorizationService
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

@@ -1,3 +1,5 @@
+package ru.kafedrase.authapp
+
 enum class Role {
     READ, WRITE, EXECUTE;
 

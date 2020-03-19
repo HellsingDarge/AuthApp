@@ -1,5 +1,5 @@
-package domain
+package ru.kafedrase.authapp.domain
 
-import Role
+import ru.kafedrase.authapp.Role
 
 data class UsersResources(val path: String?, val role: Role, val login: String)
