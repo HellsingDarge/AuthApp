@@ -16,7 +16,8 @@ class Application(args: Array<String>) {
 
     fun run(): ExitCode {
         if (!argHandler.canAuthenticate()) {
-            return SUCCESS
+            printHelp()
+            return HELP
         }
 
         if (!isLoginValid(argHandler.login))
