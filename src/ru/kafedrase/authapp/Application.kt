@@ -23,10 +23,11 @@ class Application(args: Array<String>) {
         if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
-        val authenResult = authenService.start(argHandler.login!!, argHandler.password!!)
+        if (!authenService.start(argHandler.login!!))
+            return UNKNOWN_LOGIN
 
-        if (authenResult != SUCCESS)
-            return authenResult
+        if (authenService.verifyPass(argHandler.password!!))
+            return INVALID_PASSWORD
 
         if (!argHandler.canAuthorise())
             return SUCCESS
