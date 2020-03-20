@@ -29,10 +29,10 @@ class Application(args: Array<String>) {
 
             if (!argHandler.canAuthorise())
                 return SUCCESS
+
             /*
                 Пытаемся авторизовать пользователя
             */
-
             val role = argHandler.getValidRole()
             val resource = argHandler.getValidResource()
             resourceRepository = ResourceRepository()
