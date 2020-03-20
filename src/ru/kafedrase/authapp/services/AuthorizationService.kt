@@ -2,21 +2,16 @@ package ru.kafedrase.authapp.services
 
 import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
-import ru.kafedrase.authapp.services.types.AuthorizationResultType
-import kotlin.math.log
 
 class AuthorizationService(private var resourceRepository: ResourceRepository) {
+    private lateinit var availableResources: UsersResources
 
-    lateinit var availableResources: UsersResources
+    class NoAccess : Throwable()
 
-    fun start(res: String, role: Role, login: String): Pair<UsersResources?, AuthorizationResultType> {
+    fun start(res: String, role: Role, login: String): UsersResources {
         val resources = UsersResources(res, role, login)
 
-        return if (haveAccess(resources)) {
-            Pair(resources, AuthorizationResultType.SUCCESS)
-        } else {
-            Pair(null, AuthorizationResultType.NO_ACCESS)
-        }
+        return if (haveAccess(resources)) resources else throw NoAccess()
     }
 
     /**

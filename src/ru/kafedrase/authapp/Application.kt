@@ -3,7 +3,6 @@ package ru.kafedrase.authapp
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.services.*
-import ru.kafedrase.authapp.services.types.AuthorizationResultType
 import java.text.ParseException
 
 class Application(args: Array<String>) {
@@ -33,28 +32,25 @@ class Application(args: Array<String>) {
                 return SUCCESS
             /*
                 Пытаемся авторизовать пользователя
-             */
+            */
             if (!argHandler.isRoleValid(argHandler.role))
                 return UNKNOWN_ROLE
 
             resourceRepository = ResourceRepository()
             authorService = AuthorizationService(resourceRepository)
 
-            val authorizationResult = authorService.start(
+            val usersResources = authorService.start(
                 argHandler.resource!!,
                 Role.valueOf(argHandler.role!!),
                 argHandler.login!!
             )
-            val authorizationResultType = authorizationResult.second
-            if (authorizationResultType == AuthorizationResultType.NO_ACCESS)
-                return NO_ACCESS
 
             if (!argHandler.canAccount())
                 return SUCCESS
 
             /*
-            Пытаемся записать активность пользователя
-             */
+                Пытаемся записать активность пользователя
+            */
 
             val dateStart = argHandler.parseDate(argHandler.dateStart!!)
             val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
@@ -66,7 +62,7 @@ class Application(args: Array<String>) {
             accountService.write(
                 UserSession(
                     user.login,
-                    argHandler.resource!!,
+                    usersResources.path,
                     dateStart,
                     dateEnd,
                     volume
@@ -77,6 +73,8 @@ class Application(args: Array<String>) {
             return INVALID_PASSWORD
         } catch (ex: AuthenticationService.UnknownLogin) {
             return UNKNOWN_LOGIN
+        } catch (ex: AuthorizationService.NoAccess) {
+            return NO_ACCESS
         } catch (e: Exception) {
             when (e) {
                 is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
