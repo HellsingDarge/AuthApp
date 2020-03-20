@@ -1,21 +1,21 @@
 package ru.kafedrase.authapp.services
 
 import ru.kafedrase.authapp.domain.User
-import ru.kafedrase.authapp.services.types.AuthenticationResultType
 import java.security.MessageDigest
 
 class AuthenticationService(private val userRepository: UserRepository) {
-    lateinit var currentUser: User
+    class UnknownLogin : Throwable()
+    class InvalidPassword : Throwable()
 
-    fun start(login: String, pass: String): Pair<User?, AuthenticationResultType> {
-        currentUser = userRepository.getUserByLogin(login) ?: return Pair(null, AuthenticationResultType.UNKNOWN_LOGIN)
+    fun start(login: String, pass: String): User {
+        val user = userRepository.getUserByLogin(login) ?: throw UnknownLogin()
 
-        if (!verifyPass(pass)) return Pair(null, AuthenticationResultType.INVALID_PASSWORD)
+        if (!verifyPass(user, pass)) throw InvalidPassword()
 
-        return Pair(currentUser, AuthenticationResultType.SUCCESS)
+        return user
     }
 
-    private fun verifyPass(pass: String) = currentUser.hash == generateHash(pass, currentUser.salt)
+    private fun verifyPass(user: User, pass: String) = user.hash == generateHash(pass, user.salt)
 
     private fun generateHash(plaintext: String, salt: String) =
         MessageDigest.getInstance("SHA-256")
@@ -23,3 +23,4 @@ class AuthenticationService(private val userRepository: UserRepository) {
             .fold("", { str, it -> str + "%02x".format(it) })
 
 }
+
