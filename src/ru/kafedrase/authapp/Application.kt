@@ -1,14 +1,17 @@
 package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
+import ru.kafedrase.authapp.domain.User
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.*
 import ru.kafedrase.authapp.services.types.AuthenticationResultType
+import ru.kafedrase.authapp.services.types.AuthorizationResultType
 import java.text.ParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
+
     private val userRepository = UserRepository()
     private val authenService = AuthenticationService(userRepository)
     private lateinit var resourceRepository: ResourceRepository
@@ -21,38 +24,46 @@ class Application(args: Array<String>) {
             return HELP
         }
 
+        /*
+        Пытаемся аутентифицировать пользователя
+         */
         if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
         val authenResult = authenService.start(argHandler.login!!, argHandler.password!!)
-        if (authenResult.second == AuthenticationResultType.UNKNOWN_LOGIN)
+        val authenticationResultType = authenResult.second
+        if (authenticationResultType == AuthenticationResultType.UNKNOWN_LOGIN)
             return UNKNOWN_LOGIN
 
-        if (authenResult.second == AuthenticationResultType.INVALID_PASSWORD)
+        if (authenticationResultType == AuthenticationResultType.INVALID_PASSWORD)
             return INVALID_PASSWORD
 
-        if (!argHandler.canAuthorise() && authenResult.second == AuthenticationResultType.SUCCESS)
+        if (!argHandler.canAuthorise())
             return SUCCESS
-
+        /*
+        Пытаемся авторизовать пользователя
+         */
         if (!argHandler.isRoleValid(argHandler.role))
             return UNKNOWN_ROLE
 
         resourceRepository = ResourceRepository()
-        authorService = AuthorizationService(
-            UsersResources(
-                argHandler.resource,
-                Role.valueOf(argHandler.role!!),
-                authenService.currentUser.login
-            ),
-            resourceRepository
-        )
+        authorService = AuthorizationService(resourceRepository)
 
-        if (!authorService.haveAccess())
+        val authorizationResult = authorService.start(
+            argHandler.resource!!,
+            Role.valueOf(argHandler.role!!),
+            argHandler.login!!
+        )
+        val authorizationResultType = authorizationResult.second
+        if (authorizationResultType == AuthorizationResultType.NO_ACCESS)
             return NO_ACCESS
 
         if (!argHandler.canAccount())
             return SUCCESS
 
+        /*
+        Пытаемся записать активность пользователя
+         */
         try {
             val dateStart = argHandler.parseDate(argHandler.dateStart!!)
             val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
@@ -77,4 +88,5 @@ class Application(args: Array<String>) {
 
         return SUCCESS
     }
+
 }
