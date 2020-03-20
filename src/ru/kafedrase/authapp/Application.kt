@@ -24,8 +24,8 @@ class Application(args: Array<String>) {
                 Пытаемся аутентифицировать пользователя
             */
             val login = argHandler.getValidLogin()
-
-            authenService.start(login, argHandler.password!!)
+            val password = argHandler.getValidPassword()
+            authenService.start(login, password)
 
             if (!argHandler.canAuthorise())
                 return SUCCESS

@@ -3,49 +3,51 @@ package ru.kafedrase.authapp
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import ru.kafedrase.authapp.domain.UserSession
+import ru.kafedrase.authapp.services.AuthenticationService
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ArgHandler(args: Array<String>) {
 
-    class InvalidActivity: Throwable() {}
-    class InvalidLoginFormat: Throwable() {}
-    class UnknownRole: Throwable() {}
-    class InvalidResource: Throwable() {}
+    class InvalidActivity: Throwable()
+    class InvalidLoginFormat: Throwable()
+    class UnknownRole: Throwable()
+    class InvalidResource: Throwable()
+    class InvalidPassword: Throwable()
 
     private val parser = ArgParser("app.jar", true)
 
-    val login: String? by parser.option(
+    private val login: String? by parser.option(
         ArgType.String,
         shortName = "login",
         description = "Логин пользователя, строка, строчные буквы. Не более 10 символов"
     )
-    val password: String? by parser.option(
+    private val password: String? by parser.option(
         ArgType.String,
         shortName = "pass",
         description = "Пароль"
     )
-    val resource: String? by parser.option(
+    private val resource: String? by parser.option(
         ArgType.String,
         shortName = "res",
         description = "Абсолютный путь до запрашиваемого ресурса, формат A.B.C"
     )
-    val role: String? by parser.option(
+    private val role: String? by parser.option(
         ArgType.String,
         shortName = "role",
         description = "Уровень доступа к ресурсу. Возможные варианты: READ, WRITE, EXECUTE"
     )
-    val dateStart: String? by parser.option(
+    private val dateStart: String? by parser.option(
         ArgType.String,
         shortName = "ds",
         description = "Дата начала сессии с ресурсом, формат YYYY-MM-DD "
     )
-    val dateEnd: String? by parser.option(
+    private val dateEnd: String? by parser.option(
         ArgType.String,
         shortName = "de",
         description = "Дата окончания сессии с ресурсом, формат YYYY-MM-DD "
     )
-    val volume: String? by parser.option(
+    private val volume: String? by parser.option(
         ArgType.String,
         shortName = "vol",
         description = "Потребляемый объем, целое число"
@@ -78,9 +80,14 @@ class ArgHandler(args: Array<String>) {
 
     fun getValidLogin(): String {
         val login = this.login
-        return if (login != null && isLoginValid(login)) {
-            login
-        } else throw InvalidLoginFormat()
+        return if (login != null && isLoginValid(login)) login
+        else throw InvalidLoginFormat()
+    }
+
+    fun getValidPassword(): String {
+        val password = this.password
+        return if (password != null) return password
+        else throw InvalidPassword()
     }
 
     fun getValidRole(): Role {
