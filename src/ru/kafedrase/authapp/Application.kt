@@ -26,7 +26,7 @@ class Application(args: Array<String>) {
         if (!authenService.start(argHandler.login!!))
             return UNKNOWN_LOGIN
 
-        if (authenService.verifyPass(argHandler.password!!))
+        if (!authenService.verifyPass(argHandler.password!!))
             return INVALID_PASSWORD
 
         if (!argHandler.canAuthorise())
