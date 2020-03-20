@@ -1,4 +1,4 @@
-package ru.kafedrase.authapp.services
+package ru.kafedrase.authapp.services.types
 
 enum class AuthenticationResultType {
     SUCCESS,

@@ -1,6 +1,7 @@
 package ru.kafedrase.authapp.services
 
 import ru.kafedrase.authapp.domain.User
+import ru.kafedrase.authapp.services.types.AuthenticationResultType
 import java.security.MessageDigest
 
 class AuthenticationService(private val userRepository: UserRepository) {

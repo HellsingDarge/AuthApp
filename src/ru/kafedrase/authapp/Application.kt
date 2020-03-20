@@ -4,6 +4,7 @@ import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.*
+import ru.kafedrase.authapp.services.types.AuthenticationResultType
 import java.text.ParseException
 
 class Application(args: Array<String>) {
