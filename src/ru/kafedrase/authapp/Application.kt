@@ -38,7 +38,7 @@ class Application(args: Array<String>) {
         resourceRepository = ResourceRepository()
         authorService = AuthorizationService(
             UsersResources(
-                argHandler.resource,
+                authorService.usersResource.path,
                 Role.valueOf(argHandler.role!!),
                 authenService.currentUser.login
             ),

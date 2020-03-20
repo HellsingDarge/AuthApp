@@ -1,11 +1,8 @@
 package ru.kafedrase.authapp.services
 
-import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
 
-class AuthorizationService(private val usersResource: UsersResources, private var resourceRepository: ResourceRepository) {
-
-    lateinit var availableResources: UsersResources
+class AuthorizationService(val usersResource: UsersResources, private var resourceRepository: ResourceRepository) {
 
     /**
      * Работает для отфильтрованных ресурсов по конкретному пользователю
@@ -15,33 +12,17 @@ class AuthorizationService(private val usersResource: UsersResources, private va
     fun haveAccess(): Boolean {
         val resources = resourceRepository.getResourcesByUserLogin(usersResource.login)
 
-        if (usersResource.path == null || resources.isEmpty())
+        if (resources.isEmpty())
             return false
 
-        if (haveResourceWithRole(resources, usersResource.path, usersResource.role)) {
-            availableResources = usersResource
-            return true
+        val nodes = usersResource.path.split(".")
+
+        for (index in nodes.indices) {
+            val currentNode = nodes.subList(0, index + 1).joinToString(".")
+            if (resources.any { it.path == currentNode && it.role == usersResource.role })
+                return true
         }
 
-        val nodesOfResources = usersResource.path.split(".")
-        var currentNode = nodesOfResources.first()
-        nodesOfResources.dropLast(1)
-        for (index in nodesOfResources.indices) {
-            if (haveResourceWithRole(resources, currentNode, usersResource.role)) {
-                availableResources = usersResource
-                return true
-            } else {
-                val childNode = nodesOfResources.getOrNull(index) ?: return false
-                currentNode = "$currentNode.$childNode"
-            }
-        }
         return false
     }
-
-    private fun haveResourceWithRole(
-        resources: List<UsersResources>,
-        res: String,
-        role: Role
-    ) = resources.filter { it.path == res }.any { it.role == role }
-
 }
