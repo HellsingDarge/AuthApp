@@ -23,25 +23,25 @@ class Application(args: Array<String>) {
             /*
                 Пытаемся аутентифицировать пользователя
             */
+            val login = argHandler.getValidLogin()
 
-            if (!argHandler.isLoginValid(argHandler.login))
-                return INVALID_LOGIN_FORMAT
-            val user = authenService.start(argHandler.login!!, argHandler.password!!)
+            authenService.start(login, argHandler.password!!)
+
             if (!argHandler.canAuthorise())
                 return SUCCESS
             /*
                 Пытаемся авторизовать пользователя
             */
-            if (!argHandler.isRoleValid(argHandler.role))
-                return UNKNOWN_ROLE
 
+            val role = argHandler.getValidRole()
+            val resource = argHandler.getValidResource()
             resourceRepository = ResourceRepository()
             authorService = AuthorizationService(resourceRepository)
 
-            val usersResources = authorService.start(
-                argHandler.resource!!,
-                Role.valueOf(argHandler.role!!),
-                argHandler.login!!
+            authorService.start(
+                resource,
+                role,
+                login
             )
 
             if (!argHandler.canAccount())
@@ -55,10 +55,14 @@ class Application(args: Array<String>) {
             )
             return SUCCESS
 
+        } catch (ex: ArgHandler.InvalidLoginFormat) {
+            return INVALID_LOGIN_FORMAT
         } catch (ex: AuthenticationService.InvalidPassword) {
             return INVALID_PASSWORD
         } catch (ex: AuthenticationService.UnknownLogin) {
             return UNKNOWN_LOGIN
+        } catch (ex: ArgHandler.UnknownRole) {
+            return UNKNOWN_ROLE
         } catch (ex: AuthorizationService.NoAccess) {
             return NO_ACCESS
         } catch (ex: ArgHandler.InvalidActivity) {
