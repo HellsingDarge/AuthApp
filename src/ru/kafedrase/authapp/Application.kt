@@ -9,10 +9,10 @@ import java.text.ParseException
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
     private val userRepository = UserRepository()
-    private val authenService = AuthenticationService(userRepository)
+    private val authenticationService = AuthenticationService(userRepository)
     private lateinit var resourceRepository: ResourceRepository
-    private lateinit var authorService: AuthorizationService
-    private val accountService = AccountingService()
+    private lateinit var authorizationService: AuthorizationService
+    private val accountingService = AccountingService()
 
     fun run(): ExitCode {
         if (argHandler.shouldPrintHelp()) {
@@ -23,11 +23,11 @@ class Application(args: Array<String>) {
         if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
-        if (!authenService.start(argHandler.login!!))
+        if (!authenticationService.start(argHandler.login!!))
             return UNKNOWN_LOGIN
 
-        if (!authenService.verifyPass(argHandler.password!!))
-            return INVALID_PASSWORD
+        if (!authenticationService.verifyPass(argHandler.password!!))
+            return WRONG_PASSWORD
 
         if (!argHandler.canAuthorise())
             return SUCCESS
@@ -36,16 +36,16 @@ class Application(args: Array<String>) {
             return UNKNOWN_ROLE
 
         resourceRepository = ResourceRepository()
-        authorService = AuthorizationService(
+        authorizationService = AuthorizationService(
             UsersResources(
-                authorService.usersResource.path,
+                authorizationService.usersResource.path,
                 Role.valueOf(argHandler.role!!),
-                authenService.currentUser.login
+                authenticationService.currentUser.login
             ),
             resourceRepository
         )
 
-        if (!authorService.haveAccess())
+        if (!authorizationService.haveAccess())
             return NO_ACCESS
 
         if (!argHandler.canAccount())
@@ -59,9 +59,9 @@ class Application(args: Array<String>) {
             if (dateStart.after(dateEnd) || volume < 1)
                 return INVALID_ACTIVITY
 
-            accountService.write(
+            accountingService.write(
                 UserSession(
-                    authenService.currentUser, argHandler.resource!!,
+                    authenticationService.currentUser, argHandler.resource!!,
                     dateStart, dateEnd, volume
                 )
             )
