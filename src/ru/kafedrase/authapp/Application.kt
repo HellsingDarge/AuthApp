@@ -2,6 +2,7 @@ package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.services.*
+import java.lang.Exception
 import java.text.ParseException
 
 class Application(args: Array<String>) {
@@ -67,11 +68,10 @@ class Application(args: Array<String>) {
             return NO_ACCESS
         } catch (ex: ArgHandler.InvalidActivity) {
             return INVALID_ACTIVITY
-        } catch (e: Exception) {
-            when (e) {
-                is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
-                else -> throw e
-            }
+        } catch (e: NumberFormatException) {
+            return INVALID_ACTIVITY
+        } catch (e: ParseException) {
+            return INVALID_ACTIVITY
         }
     }
 

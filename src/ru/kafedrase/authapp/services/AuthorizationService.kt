@@ -4,7 +4,6 @@ import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
 
 class AuthorizationService(private var resourceRepository: ResourceRepository) {
-    private lateinit var availableResources: UsersResources
 
     class NoAccess : Throwable()
 
@@ -35,11 +34,4 @@ class AuthorizationService(private var resourceRepository: ResourceRepository) {
 
         return false
     }
-
-    private fun haveResourceWithRole(
-        resources: List<UsersResources>,
-        res: String,
-        role: Role
-    ) = resources.filter { it.path == res }.any { it.role == role }
-
 }
