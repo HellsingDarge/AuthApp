@@ -1,7 +1,6 @@
 package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
-import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.services.*
 import java.text.ParseException
 
@@ -51,30 +50,19 @@ class Application(args: Array<String>) {
             /*
                 Пытаемся записать активность пользователя
             */
-
-            val dateStart = argHandler.parseDate(argHandler.dateStart!!)
-            val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
-            val volume = argHandler.volume!!.toInt()
-
-            if (dateStart.after(dateEnd) || volume < 1)
-                return INVALID_ACTIVITY
-
             accountService.write(
-                UserSession(
-                    user.login,
-                    usersResources.path,
-                    dateStart,
-                    dateEnd,
-                    volume
-                )
+                argHandler.getUserSession()
             )
             return SUCCESS
+
         } catch (ex: AuthenticationService.InvalidPassword) {
             return INVALID_PASSWORD
         } catch (ex: AuthenticationService.UnknownLogin) {
             return UNKNOWN_LOGIN
         } catch (ex: AuthorizationService.NoAccess) {
             return NO_ACCESS
+        } catch (ex: ArgHandler.InvalidActivity) {
+            return INVALID_ACTIVITY
         } catch (e: Exception) {
             when (e) {
                 is NumberFormatException, is ParseException -> return INVALID_ACTIVITY

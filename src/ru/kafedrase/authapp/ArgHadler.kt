@@ -2,13 +2,17 @@ package ru.kafedrase.authapp
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
+import ru.kafedrase.authapp.domain.UserSession
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ArgHandler(args: Array<String>) {
+
+    class InvalidActivity: Throwable() {}
+
     private val parser = ArgParser("app.jar", true)
 
-    var login: String? by parser.option(
+    val login: String? by parser.option(
         ArgType.String,
         shortName = "login",
         description = "Логин пользователя, строка, строчные буквы. Не более 10 символов"
@@ -63,10 +67,24 @@ class ArgHandler(args: Array<String>) {
 
     fun isRoleValid(role: String?) = !role.isNullOrBlank() && Role.getNames().contains(role)
 
-    fun parseDate(date: String): Date {
+    fun parseDate(date: String?): Date {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         formatter.isLenient = false
         return formatter.parse(date)
+    }
+
+    fun getUserSession(): UserSession {
+        val dateStart = parseDate(dateStart)
+        val dateEnd = parseDate(dateEnd)
+        val volume = volume!!.toInt()
+        val login = this.login
+        val resource = this.resource
+
+        return if (login != null && resource != null && !(dateStart.after(dateEnd) || volume < 1)) {
+            UserSession(login, resource, dateStart, dateEnd, volume)
+        } else {
+            throw InvalidActivity()
+        }
     }
 
     fun printHelp() {
