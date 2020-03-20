@@ -22,23 +22,17 @@ class AuthorizationService(private var resourceRepository: ResourceRepository) {
     private fun haveAccess(usersResource: UsersResources): Boolean {
         val resources = resourceRepository.getResourcesByUserLogin(usersResource.login)
 
-        if (haveResourceWithRole(resources, usersResource.path, usersResource.role)) {
-            availableResources = usersResource
-            return true
+        if (resources.isEmpty())
+            return false
+
+        val nodes = usersResource.path.split(".")
+
+        for (index in nodes.indices) {
+            val currentNode = nodes.subList(0, index + 1).joinToString(".")
+            if (resources.any { it.path == currentNode && it.role == usersResource.role })
+                return true
         }
 
-        val nodesOfResources = usersResource.path.split(".")
-        var currentNode = nodesOfResources.first()
-        nodesOfResources.dropLast(1)
-        for (index in nodesOfResources.indices) {
-            if (haveResourceWithRole(resources, currentNode, usersResource.role)) {
-                availableResources = usersResource
-                return true
-            } else {
-                val childNode = nodesOfResources.getOrNull(index) ?: return false
-                currentNode = "$currentNode.$childNode"
-            }
-        }
         return false
     }
 
