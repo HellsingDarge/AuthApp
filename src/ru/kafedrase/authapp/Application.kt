@@ -2,7 +2,6 @@ package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.services.*
-import java.lang.Exception
 import java.text.ParseException
 
 class Application(args: Array<String>) {
@@ -74,5 +73,4 @@ class Application(args: Array<String>) {
             return INVALID_ACTIVITY
         }
     }
-
 }
