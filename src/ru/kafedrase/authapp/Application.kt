@@ -24,11 +24,13 @@ class Application(args: Array<String>) {
             return INVALID_LOGIN_FORMAT
 
         val authenResult = authenService.start(argHandler.login!!, argHandler.password!!)
+        if (authenResult.second == AuthenticationResultType.UNKNOWN_LOGIN)
+            return UNKNOWN_LOGIN
 
-        if (authenResult != SUCCESS)
-            return authenResult
+        if (authenResult.second == AuthenticationResultType.INVALID_PASSWORD)
+            return INVALID_PASSWORD
 
-        if (!argHandler.canAuthorise())
+        if (!argHandler.canAuthorise() && authenResult.second == AuthenticationResultType.SUCCESS)
             return SUCCESS
 
         if (!argHandler.isRoleValid(argHandler.role))
