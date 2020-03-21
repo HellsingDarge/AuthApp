@@ -38,7 +38,7 @@ class Application(args: Array<String>) {
         resourceRepository = ResourceRepository()
         authorizationService = AuthorizationService(
             UsersResources(
-                authorizationService.usersResource.path,
+                argHandler.resource!!,
                 Role.valueOf(argHandler.role!!),
                 authenticationService.currentUser.login
             ),
@@ -61,7 +61,7 @@ class Application(args: Array<String>) {
 
             accountingService.write(
                 UserSession(
-                    authenticationService.currentUser, argHandler.resource!!,
+                    authenticationService.currentUser, authorizationService.usersResource.path,
                     dateStart, dateEnd, volume
                 )
             )
