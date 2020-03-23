@@ -59,16 +59,6 @@ class ArgHandler(args: Array<String>) {
 
     fun shouldPrintHelp() = !canAuthenticate()
 
-    fun isLoginValid(login: String?) = !login.isNullOrBlank() && login.matches(Regex("[a-z]{1,10}"))
-
-    fun isRoleValid(role: String?) = !role.isNullOrBlank() && Role.getNames().contains(role)
-
-    fun parseDate(date: String): Date {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        formatter.isLenient = false
-        return formatter.parse(date)
-    }
-
     fun printHelp() {
         println(
             """
