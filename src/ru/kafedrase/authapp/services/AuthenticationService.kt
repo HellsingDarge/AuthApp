@@ -6,7 +6,7 @@ import java.security.MessageDigest
 class AuthenticationService(private val userRepository: UserRepository) {
     lateinit var currentUser: User
 
-    fun start(login: String): Boolean {
+    fun isExistUser(login: String): Boolean {
         currentUser = userRepository.getUserByLogin(login) ?: return false
         return true
     }
