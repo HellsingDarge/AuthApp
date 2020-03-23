@@ -24,7 +24,7 @@ class Application(args: Array<String>) {
         if (!userService.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
-        if (!authenticationService.isExistUser(argHandler.login!!))
+        if (!authenticationService.start(argHandler.login!!))
             return UNKNOWN_LOGIN
 
         if (!authenticationService.verifyPass(argHandler.password!!))
