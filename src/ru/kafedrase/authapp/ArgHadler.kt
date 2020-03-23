@@ -8,7 +8,7 @@ import java.util.*
 class ArgHandler(args: Array<String>) {
     private val parser = ArgParser("app.jar", true)
 
-    var login: String? by parser.option(
+    val login: String? by parser.option(
         ArgType.String,
         shortName = "login",
         description = "Логин пользователя, строка, строчные буквы. Не более 10 символов"
