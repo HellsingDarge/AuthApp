@@ -10,7 +10,6 @@ class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
     private val userRepository = UserRepository()
     private val authenticationService = AuthenticationService(userRepository)
-    private val userService = UserService()
     private lateinit var resourceRepository: ResourceRepository
     private lateinit var authorizationService: AuthorizationService
     private val accountingService = AccountingService()
@@ -21,7 +20,7 @@ class Application(args: Array<String>) {
             return HELP
         }
 
-        if (!userService.isLoginValid(argHandler.login))
+        if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
         if (!authenticationService.start(argHandler.login!!))
@@ -33,7 +32,7 @@ class Application(args: Array<String>) {
         if (!argHandler.canAuthorise())
             return SUCCESS
 
-        if (!userService.isRoleValid(argHandler.role))
+        if (!argHandler.isRoleValid(argHandler.role))
             return UNKNOWN_ROLE
 
         resourceRepository = ResourceRepository()
@@ -53,11 +52,11 @@ class Application(args: Array<String>) {
             return SUCCESS
 
         try {
-            val dateStart = userService.parseDate(argHandler.dateStart!!)
-            val dateEnd = userService.parseDate(argHandler.dateEnd!!)
-            val volume = userService.parseVolume(argHandler.volume!!)
+            val dateStart = argHandler.parseDate(argHandler.dateStart!!)
+            val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
+            val volume = argHandler.volume!!.toInt()
 
-            if (!userService.areDatesValid(dateStart, dateEnd) || !userService.isVolumeValid(volume))
+            if (dateStart.after(dateEnd) || volume < 1)
                 return INVALID_ACTIVITY
 
             accountingService.write(
