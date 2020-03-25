@@ -1,7 +1,6 @@
 package ru.kafedrase.authapp.services
 
 import ru.kafedrase.authapp.Role
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -10,23 +9,15 @@ class UserService {
 
     fun isRoleValid(role: String?) = !role.isNullOrBlank() && Role.getNames().contains(role)
 
-    fun parseDate(date: String): Date? = try {
+    fun parseDate(date: String): Date {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         formatter.isLenient = false
-        formatter.parse(date)
-    } catch (ex: ParseException) {
-        null
+        return formatter.parse(date)
     }
 
-    fun parseVolume(volume: String): Int? {
-        return try {
-            volume.toInt()
-        } catch (ex: NumberFormatException) {
-            return null
-        }
-    }
+    fun parseVolume(volume: String) = volume.toInt()
 
-    fun areDatesValid(start: Date?, end: Date?) = start != null && end != null && end.after(start)
+    fun areDatesValid(s: Date, e: Date) = s.after(e)
 
-    fun isVolumeValid(volume: Int?)= volume != null && volume > 0
+    fun isVolumeValid(volume: Int) = volume > 0
 }

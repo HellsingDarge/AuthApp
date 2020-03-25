@@ -4,7 +4,7 @@ import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.*
-
+import java.text.ParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
@@ -52,19 +52,27 @@ class Application(args: Array<String>) {
         if (!argHandler.canAccount())
             return SUCCESS
 
-        val dateStart = userService.parseDate(argHandler.dateStart!!)
-        val dateEnd = userService.parseDate(argHandler.dateEnd!!)
-        val volume = userService.parseVolume(argHandler.volume!!)
+        try {
+            val dateStart = userService.parseDate(argHandler.dateStart!!)
+            val dateEnd = userService.parseDate(argHandler.dateEnd!!)
+            val volume = userService.parseVolume(argHandler.volume!!)
 
-        if (!userService.areDatesValid(dateStart, dateEnd) || !userService.isVolumeValid(volume))
-            return INVALID_ACTIVITY
+            if (!userService.areDatesValid(dateStart, dateEnd) || !userService.isVolumeValid(volume))
+                return INVALID_ACTIVITY
 
-        accountingService.write(
-            UserSession(
-                authenticationService.currentUser, authorizationService.usersResource.path,
-                dateStart!!, dateEnd!!, volume!!
+            accountingService.write(
+                UserSession(
+                    authenticationService.currentUser, authorizationService.usersResource.path,
+                    dateStart, dateEnd, volume
+                )
             )
-        )
+
+        } catch (e: Exception) {
+            when (e) {
+                is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
+                else -> throw e
+            }
+        }
 
         return SUCCESS
     }
