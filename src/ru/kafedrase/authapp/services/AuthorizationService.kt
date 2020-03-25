@@ -1,24 +1,15 @@
 package ru.kafedrase.authapp.services
 
-import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
 
-class AuthorizationService(private var resourceRepository: ResourceRepository) {
-
-    class NoAccess : Throwable()
-
-    fun start(res: String, role: Role, login: String): UsersResources {
-        val resources = UsersResources(res, role, login)
-
-        return if (haveAccess(resources)) resources else throw NoAccess()
-    }
+class AuthorizationService(val usersResource: UsersResources, private var resourceRepository: ResourceRepository) {
 
     /**
      * Работает для отфильтрованных ресурсов по конкретному пользователю
      * Если найдено прямое совпадение ресурса и роли — доступ найден и выдан (Например для A.AA.AA - Read)
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
-    private fun haveAccess(usersResource: UsersResources): Boolean {
+    fun haveAccess(): Boolean {
         val resources = resourceRepository.getResourcesByUserLogin(usersResource.login)
 
         if (resources.isEmpty())

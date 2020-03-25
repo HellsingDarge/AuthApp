@@ -1,17 +1,18 @@
 package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
+import ru.kafedrase.authapp.domain.UserSession
+import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.*
 import java.text.ParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-
     private val userRepository = UserRepository()
-    private val authenService = AuthenticationService(userRepository)
+    private val authenticationService = AuthenticationService(userRepository)
     private lateinit var resourceRepository: ResourceRepository
-    private lateinit var authorService: AuthorizationService
-    private val accountService = AccountingService()
+    private lateinit var authorizationService: AuthorizationService
+    private val accountingService = AccountingService()
 
     fun run(): ExitCode {
         if (argHandler.shouldPrintHelp()) {
@@ -19,58 +20,59 @@ class Application(args: Array<String>) {
             return HELP
         }
 
-        try {
-            /*
-                Пытаемся аутентифицировать пользователя
-            */
-            val login = argHandler.getValidLogin()
-            val password = argHandler.getValidPassword()
-            authenService.start(login, password)
+        if (!argHandler.isLoginValid(argHandler.login))
+            return INVALID_LOGIN_FORMAT
 
-            if (!argHandler.canAuthorise())
-                return SUCCESS
+        if (!authenticationService.start(argHandler.login!!))
+            return UNKNOWN_LOGIN
 
-            /*
-                Пытаемся авторизовать пользователя
-            */
-            val role = argHandler.getValidRole()
-            val resource = argHandler.getValidResource()
-            resourceRepository = ResourceRepository()
-            authorService = AuthorizationService(resourceRepository)
+        if (!authenticationService.verifyPass(argHandler.password!!))
+            return WRONG_PASSWORD
 
-            authorService.start(
-                resource,
-                role,
-                login
-            )
-
-            if (!argHandler.canAccount())
-                return SUCCESS
-
-            /*
-                Пытаемся записать активность пользователя
-            */
-            accountService.write(
-                argHandler.getUserSession()
-            )
+        if (!argHandler.canAuthorise())
             return SUCCESS
 
-        } catch (ex: ArgHandler.InvalidLoginFormat) {
-            return INVALID_LOGIN_FORMAT
-        } catch (ex: AuthenticationService.InvalidPassword) {
-            return INVALID_PASSWORD
-        } catch (ex: AuthenticationService.UnknownLogin) {
-            return UNKNOWN_LOGIN
-        } catch (ex: ArgHandler.UnknownRole) {
+        if (!argHandler.isRoleValid(argHandler.role))
             return UNKNOWN_ROLE
-        } catch (ex: AuthorizationService.NoAccess) {
+
+        resourceRepository = ResourceRepository()
+        authorizationService = AuthorizationService(
+            UsersResources(
+                argHandler.resource!!,
+                Role.valueOf(argHandler.role!!),
+                authenticationService.currentUser.login
+            ),
+            resourceRepository
+        )
+
+        if (!authorizationService.haveAccess())
             return NO_ACCESS
-        } catch (ex: ArgHandler.InvalidActivity) {
-            return INVALID_ACTIVITY
-        } catch (e: NumberFormatException) {
-            return INVALID_ACTIVITY
-        } catch (e: ParseException) {
-            return INVALID_ACTIVITY
+
+        if (!argHandler.canAccount())
+            return SUCCESS
+
+        try {
+            val dateStart = argHandler.parseDate(argHandler.dateStart!!)
+            val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
+            val volume = argHandler.volume!!.toInt()
+
+            if (dateStart.after(dateEnd) || volume < 1)
+                return INVALID_ACTIVITY
+
+            accountingService.write(
+                UserSession(
+                    authenticationService.currentUser, authorizationService.usersResource.path,
+                    dateStart, dateEnd, volume
+                )
+            )
+
+        } catch (e: Exception) {
+            when (e) {
+                is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
+                else -> throw e
+            }
         }
+
+        return SUCCESS
     }
 }
