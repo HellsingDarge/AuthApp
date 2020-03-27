@@ -16,3 +16,6 @@ Build: `kotlinc -cp lib/kotlinx-cli-0.2.1.jar src -include-runtime -d JAR_NAME.j
 Run: `java -cp "lib/kotlinx-cli-0.2.1.jar:JAR_NAME.jar" -jar JAR_NAME.jar <args>`  
 Tests: run `test.sh`
 
+Roadmaps:
+1. [Initial model/specification](https://github.com/HellsingDarge/AuthApp/blob/master/docs/roadmap1.md)
+2. [Cleaning repository](https://github.com/HellsingDarge/AuthApp/blob/master/docs/roadmap2.md)
