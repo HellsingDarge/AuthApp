@@ -18,12 +18,11 @@ function testcase {
     RES=$?
 
     (("TESTS_RUN+=1"))
-    if [[ ${RES} -eq "$EXPECTED_CODE" ]]; then
-        echo -e "${GREEN}Test ${TEST_NUM}: passed${NC}"
-        (("TEST_SUCCESS+=1"))
-    else
+    if [[ ${RES} -ne "$EXPECTED_CODE" ]]; then
         echo -e "${RED}Test ${TEST_NUM}: failed (Expected: $EXPECTED_CODE. Got: $RES)${NC}"
         (("TEST_FAILURES+=1"))
+    else
+        (("TEST_SUCCESS+=1"))
     fi
 }
 
