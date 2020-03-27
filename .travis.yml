@@ -6,4 +6,6 @@ addons:
     - name: kotlin
       confinement: classic
 
-scripts: test.sh
+script:
+  - bash ./build.sh
+  - bash ./test.sh
