@@ -4,7 +4,7 @@ Depends on [kotlinx.cli](https://github.com/kotlin/kotlinx.cli) for arguments pa
 Scripts
 ---
 `build.sh` - build `AuthApp.jar`  
-`tests.sh ` - run tests on `AuthApp.jar`
+`tests.sh ` - run tests on `AuthApp.jar`  
 `run.sh <args>` - run `AuthApp.jar` with specified arguments
 
 Work with terminal
