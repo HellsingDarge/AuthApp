@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/HellsingDarge/AuthApp.svg?branch=master)](https://travis-ci.org/HellsingDarge/AuthApp)  [GiHub Pages](https://hellsingdarge.github.io/AuthApp/)
+
 A prototype/model authentication app for working with DB, currently bare bones  
 Depends on [kotlinx.cli](https://github.com/kotlin/kotlinx.cli) for arguments parsing (jar file in `lib` folder)
 
