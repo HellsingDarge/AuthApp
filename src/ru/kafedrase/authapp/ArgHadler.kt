@@ -2,8 +2,8 @@ package ru.kafedrase.authapp
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class ArgHandler(args: Array<String>) {
     private val parser = ArgParser("AuthApp.jar", true)
@@ -63,10 +63,9 @@ class ArgHandler(args: Array<String>) {
 
     fun isRoleValid(role: String?) = !role.isNullOrBlank() && Role.getNames().contains(role)
 
-    fun parseDate(date: String): Date {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        formatter.isLenient = false
-        return formatter.parse(date)
+    fun parseDate(date: String): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return LocalDate.parse(date, formatter)
     }
 
     fun printHelp() {

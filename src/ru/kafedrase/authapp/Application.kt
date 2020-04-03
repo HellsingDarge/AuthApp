@@ -9,7 +9,7 @@ import ru.kafedrase.authapp.services.AuthenticationService
 import ru.kafedrase.authapp.services.AuthorizationService
 import ru.kafedrase.authapp.services.ResourceRepository
 import java.sql.DriverManager
-import java.text.ParseException
+import java.time.format.DateTimeParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
@@ -64,7 +64,7 @@ class Application(args: Array<String>) {
             val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
             val volume = argHandler.volume!!.toInt()
 
-            if (dateStart.after(dateEnd) || volume < 1)
+            if (dateStart.isAfter(dateEnd) || volume < 1)
                 return INVALID_ACTIVITY
 
             accountingService.write(
@@ -76,7 +76,7 @@ class Application(args: Array<String>) {
 
         } catch (e: Exception) {
             when (e) {
-                is NumberFormatException, is ParseException -> return INVALID_ACTIVITY
+                is NumberFormatException, is DateTimeParseException -> return INVALID_ACTIVITY
                 else -> throw e
             }
         }
