@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ArgHandler(args: Array<String>) {
-    private val parser = ArgParser("app.jar", true)
+    private val parser = ArgParser("AuthApp.jar", true)
 
     val login: String? by parser.option(
         ArgType.String,

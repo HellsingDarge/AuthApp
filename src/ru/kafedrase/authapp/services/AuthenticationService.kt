@@ -1,13 +1,14 @@
 package ru.kafedrase.authapp.services
 
+import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.domain.User
 import java.security.MessageDigest
 
-class AuthenticationService(private val userRepository: UserRepository) {
+class AuthenticationService(private val authenticationDAO: AuthenticationDAO) {
     lateinit var currentUser: User
 
     fun start(login: String): Boolean {
-        currentUser = userRepository.getUserByLogin(login) ?: return false
+        currentUser = authenticationDAO.getUserByLogin(login) ?: return false
         return true
     }
 

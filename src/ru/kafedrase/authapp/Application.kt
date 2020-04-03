@@ -1,15 +1,18 @@
 package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
+import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
-import ru.kafedrase.authapp.services.*
+import ru.kafedrase.authapp.services.AccountingService
+import ru.kafedrase.authapp.services.AuthenticationService
+import ru.kafedrase.authapp.services.AuthorizationService
+import ru.kafedrase.authapp.services.ResourceRepository
+import java.sql.DriverManager
 import java.text.ParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-    private val userRepository = UserRepository()
-    private val authenticationService = AuthenticationService(userRepository)
     private lateinit var resourceRepository: ResourceRepository
     private lateinit var authorizationService: AuthorizationService
     private val accountingService = AccountingService()
@@ -22,6 +25,11 @@ class Application(args: Array<String>) {
 
         if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
+
+        val dbConnection = DriverManager.getConnection("jdbc:h2:./AuthApp", "sa", "")
+
+        val usersCredentialsDAO = AuthenticationDAO(dbConnection)
+        val authenticationService = AuthenticationService(usersCredentialsDAO)
 
         if (!authenticationService.start(argHandler.login!!))
             return UNKNOWN_LOGIN
