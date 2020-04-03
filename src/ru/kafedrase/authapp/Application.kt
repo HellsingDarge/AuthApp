@@ -2,20 +2,17 @@ package ru.kafedrase.authapp
 
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.dao.AuthenticationDAO
+import ru.kafedrase.authapp.dao.AuthorisationDAO
 import ru.kafedrase.authapp.domain.UserSession
 import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.AccountingService
 import ru.kafedrase.authapp.services.AuthenticationService
-import ru.kafedrase.authapp.services.AuthorizationService
-import ru.kafedrase.authapp.services.ResourceRepository
+import ru.kafedrase.authapp.services.AuthorisationService
 import java.sql.DriverManager
 import java.time.format.DateTimeParseException
 
 class Application(args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
-    private lateinit var resourceRepository: ResourceRepository
-    private lateinit var authorizationService: AuthorizationService
-    private val accountingService = AccountingService()
 
     fun run(): ExitCode {
         if (argHandler.shouldPrintHelp()) {
@@ -26,6 +23,7 @@ class Application(args: Array<String>) {
         if (!argHandler.isLoginValid(argHandler.login))
             return INVALID_LOGIN_FORMAT
 
+        // todo instead of giving all services admin rights, give each service only the needed one
         val dbConnection = DriverManager.getConnection("jdbc:h2:./AuthApp", "sa", "")
 
         val usersCredentialsDAO = AuthenticationDAO(dbConnection)
@@ -43,14 +41,15 @@ class Application(args: Array<String>) {
         if (!argHandler.isRoleValid(argHandler.role))
             return UNKNOWN_ROLE
 
-        resourceRepository = ResourceRepository()
-        authorizationService = AuthorizationService(
+        val authorisationDAO = AuthorisationDAO(dbConnection)
+
+        val authorizationService = AuthorisationService(
             UsersResources(
                 argHandler.resource!!,
                 Role.valueOf(argHandler.role!!),
                 authenticationService.currentUser.login
             ),
-            resourceRepository
+            authorisationDAO
         )
 
         if (!authorizationService.haveAccess())
@@ -58,6 +57,8 @@ class Application(args: Array<String>) {
 
         if (!argHandler.canAccount())
             return SUCCESS
+
+        val accountingService = AccountingService(dbConnection)
 
         try {
             val dateStart = argHandler.parseDate(argHandler.dateStart!!)
@@ -69,8 +70,12 @@ class Application(args: Array<String>) {
 
             accountingService.write(
                 UserSession(
-                    authenticationService.currentUser, authorizationService.usersResource.path,
-                    dateStart, dateEnd, volume
+                    authenticationService.currentUser,
+                    Role.valueOf(argHandler.role!!), // fixme
+                    authorizationService.usersResource.path,
+                    dateStart,
+                    dateEnd,
+                    volume
                 )
             )
 
@@ -80,6 +85,8 @@ class Application(args: Array<String>) {
                 else -> throw e
             }
         }
+
+        dbConnection.close()
 
         return SUCCESS
     }
