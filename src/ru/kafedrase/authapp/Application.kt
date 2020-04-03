@@ -1,5 +1,7 @@
 package ru.kafedrase.authapp
 
+
+import org.apache.logging.log4j.LogManager
 import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.dao.AuthorisationDAO
@@ -11,36 +13,48 @@ import ru.kafedrase.authapp.services.AuthorisationService
 import java.sql.DriverManager
 import java.time.format.DateTimeParseException
 
-class Application(args: Array<String>) {
+
+class Application(private val args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
 
     fun run(): ExitCode {
+        val logger = LogManager.getLogger()
+
+        logger.debug("Passed arguments: " + args.joinToString(" "))
+
         if (argHandler.shouldPrintHelp()) {
             argHandler.printHelp()
             return HELP
         }
 
-        if (!argHandler.isLoginValid(argHandler.login))
+        if (!argHandler.isLoginValid(argHandler.login)) {
+            logger.error("Received invalid login: ${argHandler.login}")
             return INVALID_LOGIN_FORMAT
-
+        }
         // todo instead of giving all services admin rights, give each service only the needed one
         val dbConnection = DriverManager.getConnection("jdbc:h2:./AuthApp", "sa", "")
 
         val usersCredentialsDAO = AuthenticationDAO(dbConnection)
         val authenticationService = AuthenticationService(usersCredentialsDAO)
 
-        if (!authenticationService.start(argHandler.login!!))
+        if (!authenticationService.start(argHandler.login!!)) {
+            logger.error("Couldn't find user for login: ${argHandler.login}")
             return UNKNOWN_LOGIN
+        }
 
-        if (!authenticationService.verifyPass(argHandler.password!!))
+        if (!authenticationService.verifyPass(argHandler.password!!)) {
+            logger.error("Password didn't match for user: ${argHandler.login}")
             return WRONG_PASSWORD
-
-        if (!argHandler.canAuthorise())
+        }
+        if (!argHandler.canAuthorise()) {
+            logger.info("Successfully authenticated user: ${argHandler.login}")
             return SUCCESS
+        }
 
-        if (!argHandler.isRoleValid(argHandler.role))
+        if (!argHandler.isRoleValid(argHandler.role)) {
+            logger.error("Received invalid role: ${argHandler.role}")
             return UNKNOWN_ROLE
-
+        }
         val authorisationDAO = AuthorisationDAO(dbConnection)
 
         val authorizationService = AuthorisationService(
@@ -52,12 +66,14 @@ class Application(args: Array<String>) {
             authorisationDAO
         )
 
-        if (!authorizationService.haveAccess())
+        if (!authorizationService.haveAccess()) {
+            logger.error("User \"${argHandler.login}\" with role \"${argHandler.role}\" doesn't have access to resource \"${argHandler.resource}\"")
             return NO_ACCESS
-
-        if (!argHandler.canAccount())
+        }
+        if (!argHandler.canAccount()) {
+            logger.info("Successfully authorised user")
             return SUCCESS
-
+        }
         val accountingService = AccountingService(dbConnection)
 
         try {
@@ -65,9 +81,16 @@ class Application(args: Array<String>) {
             val dateEnd = argHandler.parseDate(argHandler.dateEnd!!)
             val volume = argHandler.volume!!.toInt()
 
-            if (dateStart.isAfter(dateEnd) || volume < 1)
+            if (dateStart.isAfter(dateEnd) || volume < 1) {
+                logger.error(
+                    """Received invalid date or volume.
+                    |ds: $dateStart
+                    |ds: $dateEnd
+                    |vol: $volume
+                """.trimMargin()
+                )
                 return INVALID_ACTIVITY
-
+            }
             accountingService.write(
                 UserSession(
                     authenticationService.currentUser,
@@ -81,13 +104,19 @@ class Application(args: Array<String>) {
 
         } catch (e: Exception) {
             when (e) {
-                is NumberFormatException, is DateTimeParseException -> return INVALID_ACTIVITY
-                else -> throw e
+                is NumberFormatException, is DateTimeParseException -> {
+                    logger.error("Couldn't parse date or volume.", e)
+                    return INVALID_ACTIVITY
+                }
+                else -> {
+                    logger.fatal("Uncaught exception.", e)
+                    throw e
+                }
             }
         }
 
         dbConnection.close()
-
+        logger.debug("Completed AAA successfully")
         return SUCCESS
     }
 }
