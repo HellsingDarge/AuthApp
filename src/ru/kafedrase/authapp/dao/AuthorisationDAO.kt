@@ -9,22 +9,22 @@ class AuthorisationDAO(private val dbConnection: Connection) {
         // todo change in schema tables user to login
         val query = "SELECT * FROM Resources WHERE user = ?"
         val statement = dbConnection.prepareStatement(query)
-        statement.setString(1, login)
-        val result = statement.executeQuery()
-
         val out = arrayListOf<UsersResources>()
 
-        while (result.next()) {
-            out.add(
-                UsersResources(
-                    result.getString("resource"),
-                    Role.valueOf(result.getString("role")),
-                    result.getString("user")
-                )
-            )
-        }
+        statement.use {
+            it.setString(1, login)
+            val result = statement.executeQuery()
 
-        statement.close()
+            while (result.next()) {
+                out.add(
+                        UsersResources(
+                                result.getString("resource"),
+                                Role.valueOf(result.getString("role")),
+                                result.getString("user")
+                        )
+                )
+            }
+        }
         return out.toList()
     }
 }
