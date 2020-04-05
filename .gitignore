@@ -54,5 +54,3 @@ fabric.properties
 hs_err_pid*
 
 !lib/*.jar
-
-*.db
