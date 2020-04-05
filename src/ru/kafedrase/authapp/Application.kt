@@ -107,17 +107,12 @@ class Application(private val args: Array<String>) {
                         )
                 )
 
-            } catch (e: Exception) { //fixme вот тут разве нелья сделать несколько catch?
-                when (e) {
-                    is NumberFormatException, is DateTimeParseException -> {
-                        logger.error("Couldn't parse date or volume.", e)
-                        return INVALID_ACTIVITY
-                    }
-                    else -> {
-                        logger.fatal("Uncaught exception.", e)
-                        throw e
-                    }
-                }
+            } catch (e: NumberFormatException) {
+                logger.error("Couldn't parse argument vol", e)
+                return INVALID_ACTIVITY
+            } catch (e: DateTimeParseException) {
+                logger.error("Couldn't parse either ds or de", e)
+                return INVALID_ACTIVITY
             }
         }
         logger.debug("Completed AAA successfully")
