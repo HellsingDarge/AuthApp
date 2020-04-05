@@ -10,6 +10,8 @@ class AuthorisationService(val usersResource: UsersResources, private val author
      * Если найдено прямое совпадение ресурса и роли — доступ найден и выдан (Например для A.AA.AA - Read)
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
+    val resource: UsersResources? = null
+
     fun haveAccess(): Boolean {
         // todo instead of returning all resources for this login, make it only return resources that should be checked?
         val resources = authorisationDAO.getResourcesByUserLogin(usersResource.login)
