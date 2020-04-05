@@ -7,8 +7,7 @@ addons:
       confinement: classic
 
 env:
-  - H2URL=jdbc:h2:./AuthApp
-  - H2USER=sa
+  - H2URL=jdbc:h2:./AuthApp H2USER=sa
 
 before_script:
   - ./build.sh
