@@ -18,6 +18,7 @@ class AuthorisationDAO(private val dbConnection: Connection) {
             while (result.next()) {
                 out.add(
                         UsersResources(
+                                result.getInt("id"),
                                 result.getString("resource"),
                                 Role.valueOf(result.getString("role")),
                                 result.getString("user")

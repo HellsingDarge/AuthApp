@@ -64,6 +64,7 @@ class Application(private val args: Array<String>) {
 
             val authorizationService = AuthorisationService(
                     UsersResources(
+                            0,
                             argHandler.resource!!,
                             Role.valueOf(argHandler.role!!),
                             authenticationService.currentUser.login
@@ -99,8 +100,7 @@ class Application(private val args: Array<String>) {
                 accountingService.write(
                         UserSession(
                                 authenticationService.currentUser,
-                                Role.valueOf(argHandler.role!!), // fixme
-                                authorizationService.usersResource.path,
+                                authorizationService.usersResource.id,
                                 dateStart,
                                 dateEnd,
                                 volume
