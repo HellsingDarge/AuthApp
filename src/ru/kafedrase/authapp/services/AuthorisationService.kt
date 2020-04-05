@@ -23,8 +23,8 @@ class AuthorisationService(val usersResource: UsersResources, private val author
 
         for (index in nodes.indices) {
             val currentNode = nodes.subList(0, index + 1).joinToString(".")
-            resource = resources.find{ it.path == currentNode && it.role == usersResource.role }
-            if(resource != null)
+            resource = resources.find { it.path == currentNode && it.role == usersResource.role }
+            if (resource != null)
                 return true
         }
 
