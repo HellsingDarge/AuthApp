@@ -10,7 +10,7 @@ class AuthorisationService(val usersResource: UsersResources, private val author
      * Если найдено прямое совпадение ресурса и роли — доступ найден и выдан (Например для A.AA.AA - Read)
      * Иначе, последовательно ищем от корня дерева подходящий доступ до прямого родителя (A - READ и A.AA - READ)
      */
-    val resource: UsersResources? = null
+    var resource: UsersResources? = null
 
     fun haveAccess(): Boolean {
         // todo instead of returning all resources for this login, make it only return resources that should be checked?
@@ -23,7 +23,8 @@ class AuthorisationService(val usersResource: UsersResources, private val author
 
         for (index in nodes.indices) {
             val currentNode = nodes.subList(0, index + 1).joinToString(".")
-            if (resources.any { it.path == currentNode && it.role == usersResource.role })
+            resource = resources.find{ it.path == currentNode && it.role == usersResource.role }
+            if(resource != null)
                 return true
         }
 
