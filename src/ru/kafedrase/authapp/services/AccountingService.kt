@@ -15,8 +15,7 @@ class AccountingService(private val dbConnection: Connection) {
             it.setDate(2, Date.valueOf(session.dateStart))
             it.setDate(3, Date.valueOf(session.dateEnd))
             it.setInt(4, session.volume)
-
-            val result = it.executeUpdate()
+            it.executeUpdate()
         }
     }
 }
