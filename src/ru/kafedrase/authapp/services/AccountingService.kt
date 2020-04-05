@@ -17,8 +17,6 @@ class AccountingService(private val dbConnection: Connection) {
             it.setInt(4, session.volume)
 
             val result = it.executeUpdate()
-
-            println("Affected row: $result")
         }
     }
 }
