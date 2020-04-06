@@ -3,6 +3,7 @@ package ru.kafedrase.authapp
 
 import org.apache.logging.log4j.LogManager
 import ru.kafedrase.authapp.ExitCode.*
+import ru.kafedrase.authapp.dao.AccountingDAO
 import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.dao.AuthorisationDAO
 import ru.kafedrase.authapp.domain.UserSession
@@ -80,7 +81,9 @@ class Application(private val args: Array<String>) {
                 logger.info("Successfully authorised user")
                 return SUCCESS
             }
-            val accountingService = AccountingService(dbConnection)
+
+            val accountingDAO = AccountingDAO(dbConnection)
+            val accountingService = AccountingService(accountingDAO)
 
             try {
                 val dateStart = argHandler.parseDate(argHandler.dateStart!!)
