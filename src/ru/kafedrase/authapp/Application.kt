@@ -100,7 +100,8 @@ class Application(private val args: Array<String>) {
                 accountingService.write(
                         UserSession(
                                 authenticationService.currentUser,
-                                authorizationService.resource!!.id, //теоретически можно словить uncaught NOP, но выше есть проверка canAccount
+                                authorizationService.resource!!.id,
+                                //теоретически можно словить NOP, но выше есть проверка haveAccess
                                 dateStart,
                                 dateEnd,
                                 volume

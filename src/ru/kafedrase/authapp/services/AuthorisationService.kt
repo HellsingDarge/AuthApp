@@ -13,21 +13,8 @@ class AuthorisationService(val usersResource: UsersResources, private val author
     var resource: UsersResources? = null
 
     fun haveAccess(): Boolean {
-        // todo instead of returning all resources for this login, make it only return resources that should be checked?
-        val resources = authorisationDAO.getResourcesByUserLogin(usersResource.login)
-
-        if (resources.isEmpty())
-            return false
-
         val nodes = usersResource.path.split(".")
-
-        for (index in nodes.indices) {
-            val currentNode = nodes.subList(0, index + 1).joinToString(".")
-            resource = resources.find { it.path == currentNode && it.role == usersResource.role }
-            if (resource != null)
-                return true
-        }
-
-        return false
+        resource = authorisationDAO.getResource(usersResource.login, usersResource.role, nodes)
+        return resource != null
     }
 }
