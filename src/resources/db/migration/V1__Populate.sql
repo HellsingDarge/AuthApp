@@ -19,20 +19,20 @@ INSERT INTO UsersCredentials VALUES (
     'd880929e469c4a2c19352f76460853be52ee581f7fcdd3097f86f670f690e910'
 );
 
-INSERT INTO Resources(resource, role, user) VALUES('A', 'READ', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('A.AA', 'WRITE', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('A.AA.AAA', 'EXECUTE', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('B', 'EXECUTE', 'admin');
-INSERT INTO Resources(resource, role, user) VALUES('A.B', 'WRITE', 'admin');
-INSERT INTO Resources(resource, role, user) VALUES('A.B', 'WRITE', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('A.B.C', 'READ', 'admin');
-INSERT INTO Resources(resource, role, user) VALUES('A.B.C', 'WRITE', 'q');
-INSERT INTO Resources(resource, role, user) VALUES('A.B', 'EXECUTE', 'q');
-INSERT INTO Resources(resource, role, user) VALUES('B', 'READ', 'q');
-INSERT INTO Resources(resource, role, user) VALUES('A.AA.AAA', 'READ', 'q');
-INSERT INTO Resources(resource, role, user) VALUES('A', 'EXECUTE', 'q');
-INSERT INTO Resources(resource, role, user) VALUES('A', 'WRITE', 'admin');
-INSERT INTO Resources(resource, role, user) VALUES('A.AA', 'EXECUTE', 'admin');
-INSERT INTO Resources(resource, role, user) VALUES('B', 'WRITE', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('A.B', 'EXECUTE', 'sasha');
-INSERT INTO Resources(resource, role, user) VALUES('A.B.C', 'EXECUTE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A', 'READ', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A.AA', 'WRITE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A.AA.AAA', 'EXECUTE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('B', 'EXECUTE', 'admin');
+INSERT INTO Resources(resource, role, login) VALUES('A.B', 'WRITE', 'admin');
+INSERT INTO Resources(resource, role, login) VALUES('A.B', 'WRITE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A.B.C', 'READ', 'admin');
+INSERT INTO Resources(resource, role, login) VALUES('A.B.C', 'WRITE', 'q');
+INSERT INTO Resources(resource, role, login) VALUES('A.B', 'EXECUTE', 'q');
+INSERT INTO Resources(resource, role, login) VALUES('B', 'READ', 'q');
+INSERT INTO Resources(resource, role, login) VALUES('A.AA.AAA', 'READ', 'q');
+INSERT INTO Resources(resource, role, login) VALUES('A', 'EXECUTE', 'q');
+INSERT INTO Resources(resource, role, login) VALUES('A', 'WRITE', 'admin');
+INSERT INTO Resources(resource, role, login) VALUES('A.AA', 'EXECUTE', 'admin');
+INSERT INTO Resources(resource, role, login) VALUES('B', 'WRITE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A.B', 'EXECUTE', 'sasha');
+INSERT INTO Resources(resource, role, login) VALUES('A.B.C', 'EXECUTE', 'sasha');

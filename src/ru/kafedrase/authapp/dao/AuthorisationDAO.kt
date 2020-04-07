@@ -6,10 +6,9 @@ import java.sql.Connection
 
 class AuthorisationDAO(private val dbConnection: Connection) {
     fun getResource(login: String, role: Role, nodes: List<String>): UsersResources? {
-        // todo change in schema tables user to login
         val builder = StringBuilder()
         builder.append(
-                "SELECT * FROM Resources WHERE  user = ? AND role = '${role.name}' AND (resource = ?"
+                "SELECT * FROM Resources WHERE  login = ? AND role = '${role.name}' AND (resource = ?"
         )
         for (index in 1 until nodes.size) { //-1 because one "resource = ?" is already in query
             builder.append(" OR resource = ?")
@@ -35,7 +34,7 @@ class AuthorisationDAO(private val dbConnection: Connection) {
                         result.getInt("id"),
                         result.getString("resource"),
                         Role.valueOf(result.getString("role")),
-                        result.getString("user")
+                        result.getString("login")
                 )
 
             }

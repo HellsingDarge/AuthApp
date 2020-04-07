@@ -6,7 +6,8 @@ import java.sql.Date
 
 class AccountingDAO(private val dbConnection: Connection) {
     fun insert(session: UserSession) {
-        val query = "INSERT INTO Sessions(user, resource_id, date_start, date_end, volume) VALUES(?, ${session.resourceId}, ?, ?, ? )"
+        val query =
+            "INSERT INTO Sessions(login, resource_id, date_start, date_end, volume) VALUES(?, ${session.resourceId}, ?, ?, ? )"
         val statement = dbConnection.prepareStatement(query)
 
         statement.use {

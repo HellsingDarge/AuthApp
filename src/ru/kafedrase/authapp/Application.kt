@@ -104,7 +104,6 @@ class Application(private val args: Array<String>) {
                         UserSession(
                                 authenticationService.currentUser,
                                 authorizationService.resource!!.id,
-                                //теоретически можно словить NOP, но выше есть проверка haveAccess
                                 dateStart,
                                 dateEnd,
                                 volume
