@@ -1,8 +1,6 @@
 package ru.kafedrase.authapp
 
-
 import org.apache.logging.log4j.LogManager
-import ru.kafedrase.authapp.ExitCode.*
 import ru.kafedrase.authapp.dao.AccountingDAO
 import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.dao.AuthorisationDAO
@@ -14,7 +12,6 @@ import ru.kafedrase.authapp.services.AuthorisationService
 import java.sql.DriverManager
 import java.time.format.DateTimeParseException
 
-
 class Application(private val args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)
 
@@ -24,14 +21,13 @@ class Application(private val args: Array<String>) {
         logger.debug("Passed arguments: " + args.joinToString(" "))
 
         if (argHandler.shouldPrintHelp()) {
-            logger.error("Not enough parameters")
             argHandler.printHelp()
-            return HELP
+            return ExitCode.HELP
         }
 
         if (!argHandler.isLoginValid(argHandler.login)) {
             logger.error("Received invalid login: ${argHandler.login}")
-            return INVALID_LOGIN_FORMAT
+            return ExitCode.INVALID_LOGIN_FORMAT
         }
         // todo instead of giving all services admin rights, give each service only the needed one
         val dbUrl = System.getenv("H2URL") ?: "jdbc:h2:./AuthApp"
@@ -45,21 +41,21 @@ class Application(private val args: Array<String>) {
 
             if (!authenticationService.start(argHandler.login!!)) {
                 logger.error("Couldn't find user for login: ${argHandler.login}")
-                return UNKNOWN_LOGIN
+                return ExitCode.UNKNOWN_LOGIN
             }
 
             if (!authenticationService.verifyPass(argHandler.password!!)) {
                 logger.error("Password didn't match for user: ${argHandler.login}")
-                return WRONG_PASSWORD
+                return ExitCode.WRONG_PASSWORD
             }
             if (!argHandler.canAuthorise()) {
                 logger.info("Successfully authenticated user: ${argHandler.login}")
-                return SUCCESS
+                return ExitCode.SUCCESS
             }
 
             if (!argHandler.isRoleValid(argHandler.role)) {
                 logger.error("Received invalid role: ${argHandler.role}")
-                return UNKNOWN_ROLE
+                return ExitCode.UNKNOWN_ROLE
             }
             val authorisationDAO = AuthorisationDAO(dbConnection)
 
@@ -75,11 +71,11 @@ class Application(private val args: Array<String>) {
 
             if (!authorizationService.haveAccess()) {
                 logger.error("User \"${argHandler.login}\" with role \"${argHandler.role}\" doesn't have access to resource \"${argHandler.resource}\"")
-                return NO_ACCESS
+                return ExitCode.NO_ACCESS
             }
             if (!argHandler.canAccount()) {
                 logger.info("Successfully authorised user")
-                return SUCCESS
+                return ExitCode.SUCCESS
             }
 
             val accountingDAO = AccountingDAO(dbConnection)
@@ -98,7 +94,7 @@ class Application(private val args: Array<String>) {
                         |vol: $volume
                     """.trimMargin()
                     )
-                    return INVALID_ACTIVITY
+                    return ExitCode.INVALID_ACTIVITY
                 }
                 accountingService.write(
                         UserSession(
@@ -109,16 +105,15 @@ class Application(private val args: Array<String>) {
                                 volume
                         )
                 )
-
             } catch (e: NumberFormatException) {
                 logger.error("Couldn't parse argument vol", e)
-                return INVALID_ACTIVITY
+                return ExitCode.INVALID_ACTIVITY
             } catch (e: DateTimeParseException) {
                 logger.error("Couldn't parse either ds or de", e)
-                return INVALID_ACTIVITY
+                return ExitCode.INVALID_ACTIVITY
             }
         }
         logger.debug("Completed AAA successfully")
-        return SUCCESS
+        return ExitCode.SUCCESS
     }
 }

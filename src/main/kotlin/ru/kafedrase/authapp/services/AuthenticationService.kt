@@ -18,5 +18,4 @@ class AuthenticationService(private val authenticationDAO: AuthenticationDAO) {
         MessageDigest.getInstance("SHA-256")
             .digest((plaintext + salt).toByteArray())
             .fold("", { str, it -> str + "%02x".format(it) })
-
 }

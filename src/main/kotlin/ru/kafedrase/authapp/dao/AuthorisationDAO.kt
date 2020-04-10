@@ -10,7 +10,7 @@ class AuthorisationDAO(private val dbConnection: Connection) {
         builder.append(
                 "SELECT * FROM Resources WHERE  login = ? AND role = '${role.name}' AND (resource = ?"
         )
-        for (index in 1 until nodes.size) { //-1 because one "resource = ?" is already in query
+        for (index in 1 until nodes.size) { // -1 because one "resource = ?" is already in query
             builder.append(" OR resource = ?")
         }
         builder.append(")")
@@ -25,7 +25,7 @@ class AuthorisationDAO(private val dbConnection: Connection) {
             for (index in nodes.indices) {
                 val currentNode = nodes.subList(0, index + 1).joinToString(".")
                 it.setString(index + 2, currentNode)
-                //+2 because prepared statement numeration starts from 1 and 1st is already taken
+                // +2 because prepared statement numeration starts from 1 and 1st is already taken
             }
 
             val result = statement.executeQuery()
@@ -36,7 +36,6 @@ class AuthorisationDAO(private val dbConnection: Connection) {
                         Role.valueOf(result.getString("role")),
                         result.getString("login")
                 )
-
             }
         }
         return out

@@ -1,9 +1,9 @@
 package ru.kafedrase.authapp
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 
 class ArgHandler(args: Array<String>) {
     private val parser = ArgParser("AuthApp.jar", true)
@@ -71,7 +71,7 @@ class ArgHandler(args: Array<String>) {
     fun printHelp() {
         println(
             """
-            Usage: app.jar options_list
+            Usage: AuthApp.jar options_list
             Options: 
                 -login -> Логин пользователя, строка, строчные буквы. Не более 10 символов { String }
                 -pass -> Пароль { String }

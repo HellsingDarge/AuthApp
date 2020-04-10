@@ -1,6 +1,5 @@
 package ru.kafedrase.authapp.domain
 
-import ru.kafedrase.authapp.Role
 import java.time.LocalDate
 
 data class UserSession(
