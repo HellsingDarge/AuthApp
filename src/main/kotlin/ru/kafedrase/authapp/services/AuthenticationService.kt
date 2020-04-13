@@ -1,8 +1,8 @@
 package ru.kafedrase.authapp.services
 
+import java.security.MessageDigest
 import ru.kafedrase.authapp.dao.AuthenticationDAO
 import ru.kafedrase.authapp.domain.User
-import java.security.MessageDigest
 
 class AuthenticationService(private val authenticationDAO: AuthenticationDAO) {
     lateinit var currentUser: User

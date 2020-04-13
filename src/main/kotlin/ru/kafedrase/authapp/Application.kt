@@ -1,5 +1,7 @@
 package ru.kafedrase.authapp
 
+import java.sql.DriverManager
+import java.time.format.DateTimeParseException
 import org.apache.logging.log4j.LogManager
 import ru.kafedrase.authapp.dao.AccountingDAO
 import ru.kafedrase.authapp.dao.AuthenticationDAO
@@ -9,8 +11,6 @@ import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.services.AccountingService
 import ru.kafedrase.authapp.services.AuthenticationService
 import ru.kafedrase.authapp.services.AuthorisationService
-import java.sql.DriverManager
-import java.time.format.DateTimeParseException
 
 class Application(private val args: Array<String>) {
     private val argHandler: ArgHandler = ArgHandler(args)

@@ -1,7 +1,7 @@
 package ru.kafedrase.authapp.dao
 
-import ru.kafedrase.authapp.domain.User
 import java.sql.Connection
+import ru.kafedrase.authapp.domain.User
 
 class AuthenticationDAO(private val dbConnection: Connection) {
     fun getUserByLogin(login: String): User? {

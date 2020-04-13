@@ -1,8 +1,8 @@
 package ru.kafedrase.authapp.dao
 
-import ru.kafedrase.authapp.domain.UserSession
 import java.sql.Connection
 import java.sql.Date
+import ru.kafedrase.authapp.domain.UserSession
 
 class AccountingDAO(private val dbConnection: Connection) {
     fun insert(session: UserSession) {

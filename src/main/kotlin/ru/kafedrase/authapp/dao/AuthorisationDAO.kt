@@ -1,8 +1,8 @@
 package ru.kafedrase.authapp.dao
 
+import java.sql.Connection
 import ru.kafedrase.authapp.Role
 import ru.kafedrase.authapp.domain.UsersResources
-import java.sql.Connection
 
 class AuthorisationDAO(private val dbConnection: Connection) {
     fun getResource(login: String, role: Role, nodes: List<String>): UsersResources? {
