@@ -6,12 +6,15 @@ buildscript {
     ext.log4j2_version = "2.13.1"
     ext.spek_version = "2.0.10"
     ext.ktlint_version = "9.2.1"
-    ext.mockito_version = "3.3.3"
+    ext.mockk_version = "1.9.3"
+    ext.detekt_version = "1.7.4"
 }
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version("$kotlin_version")
     id("org.jlleitschuh.gradle.ktlint") version("$ktlint_version")
+    id("io.gitlab.arturbosch.detekt").version("$detekt_version")
+    id("jacoco")
 }
 
 group="ru.kafedrase.authapp"
@@ -32,7 +35,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spek_version")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spek_version")
-    testCompile("org.mockito:mockito-core:$mockito_version")
+    testImplementation("io.mockk:mockk:$mockk_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 // maybe move to a more sophisticated solution (gradle plugin), rather than doing it manually?
@@ -68,5 +72,30 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+detekt {
+    toolVersion = "$detekt_version"                             // Version of the Detekt CLI that will be used. When unspecified the latest detekt version found will be used. Override to stay on the same version.
+    input = files("src/main/kotlin")    // The directories where detekt looks for source files. Defaults to `files("src/main/java", "src/main/kotlin")`.
+    parallel = false                                      // Builds the AST in parallel. Rules are always executed in parallel. Can lead to speedups in larger projects. `false` by default.
+    config = files("$rootDir/detekt-config.yml")                   // Define the detekt configuration(s) you want to use. Defaults to the default detekt configuration.
+    reports {
+        txt {
+            enabled = true                                // Enable/Disable TXT report (default: true)
+            destination = file("build/reports/detekt.txt") // Path where TXT report will be stored (default: `build/reports/detekt/detekt.txt`)
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/reports/jacoco")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        html {
+            enabled = true
+        }
     }
 }
