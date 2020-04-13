@@ -6,7 +6,7 @@ import org.flywaydb.core.Flyway
 fun main(args: Array<String>) {
 
     val flyway = Flyway.configure()
-        .dataSource("jdbc:h2:./AuthApp", "sa", "")
+        .dataSource(System.getenv("AuthAppDB_URL"), System.getenv("AuthAppDB_USER"), System.getenv("AuthAppDB_PASS"))
         .locations("resources/db/migrations")
         .load()
 

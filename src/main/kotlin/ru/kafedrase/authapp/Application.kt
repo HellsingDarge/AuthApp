@@ -30,9 +30,9 @@ class Application(private val args: Array<String>) {
             return ExitCode.INVALID_LOGIN_FORMAT
         }
         // todo instead of giving all services admin rights, give each service only the needed one
-        val dbUrl = System.getenv("H2URL") ?: "jdbc:h2:./AuthApp"
-        val dbUser = System.getenv("H2USER") ?: "sa"
-        val dbPass = System.getenv("H2PASSWORD") ?: ""
+        val dbUrl = System.getenv("AuthAppDB_URL")
+        val dbUser = System.getenv("AuthAppDB_USER")
+        val dbPass = System.getenv("AuthAppDB_PASS")
         val dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPass)
 
         dbConnection.use {
