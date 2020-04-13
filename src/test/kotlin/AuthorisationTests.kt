@@ -44,12 +44,12 @@ object AuthorizationTests : Spek({
             authorization = AuthorisationService(resource, authorDAO)
             assert(authorization.haveAccess())
         }
-        test("Have accessto the daughter directory") {
+        test("Have access via a parent directory") {
             val resource = UsersResources(2, "A.B", Role.READ, "sasha")
             authorization = AuthorisationService(resource, authorDAO)
             assert(authorization.haveAccess())
         }
-        test("Doesnt have access to an heir") {
+        test("Doesnt access via a parent directory") {
             val resource = UsersResources(3, "A.B", Role.WRITE, "sasha")
             authorization = AuthorisationService(resource, authorDAO)
             assert(!authorization.haveAccess())
