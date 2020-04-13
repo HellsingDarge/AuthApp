@@ -6,7 +6,7 @@ import ru.kafedrase.authapp.domain.UsersResources
 import ru.kafedrase.authapp.Role
 
 
-object AuthorizationTests : Spek({
+object AuthorisationTests : Spek({
     val resources: List<UsersResources> = listOf(
         UsersResources(0, "A", Role.READ, "sasha"),
         UsersResources(0, "A.AA", Role.WRITE, "sasha"),
