@@ -61,6 +61,13 @@ repositories {
     }
     jcenter()
 }
+
+processResources {
+    from("src/main/kotlin") {
+        include("resources/**")
+    }
+}
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
