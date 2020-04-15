@@ -41,6 +41,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockk_version")
 }
 
+// fixme gradle: "Copying or archiving duplicate paths with the default duplicates strategy has been deprecated."
 // maybe move to a more sophisticated solution (gradle plugin), rather than doing it manually?
 jar {
     manifest {
@@ -67,11 +68,6 @@ repositories {
     jcenter()
 }
 
-processResources {
-    from("src/main/kotlin") {
-        include("resources/**")
-    }
-}
 
 compileKotlin {
     kotlinOptions {

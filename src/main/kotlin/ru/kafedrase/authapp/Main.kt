@@ -7,7 +7,6 @@ fun main(args: Array<String>) {
 
     val flyway = Flyway.configure()
         .dataSource(System.getenv("AuthAppDB_URL"), System.getenv("AuthAppDB_USER"), System.getenv("AuthAppDB_PASS"))
-        .locations("resources/db/migrations")
         .load()
 
     flyway.migrate()

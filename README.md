@@ -4,16 +4,10 @@ A prototype/model authentication app for working with DB, currently bare bones
 
 Usage
 ---
-`./gradlew build` - build app jar with all dependencies  
+`./gradlew build` - build app jar with all dependencies (will be placed in `build/libs`)  
 `./gradlew test` - test implementation  
 `java -jar AuthApp-<version>.jar <args>` - run the jar with specified `<args>`    
 
-Work with terminal
----
-Requires to have `kotlinc` and `java` installed  
-Build: `kotlinc -cp lib/kotlinx-cli-0.2.1.jar src -include-runtime -d JAR_NAME.jar/`  
-Run: `java -cp "lib/kotlinx-cli-0.2.1.jar:JAR_NAME.jar" -jar JAR_NAME.jar <args>`  
-Tests: run `test.sh`
 
 Roadmaps:
 1. [Initial model/specification](docs/roadmap1.md)
