@@ -1,0 +1,9 @@
+build:
+  maxIssues: 10
+
+style:
+  MagicNumber:
+    excludes: '**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt,**/*DAO.kt' # default + ignore DAO classes (ignore prepared statements)
+    ignoreEnums: true
+  MaxLineLength:
+    active: false # already yelled at by ktlint

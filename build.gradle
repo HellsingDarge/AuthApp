@@ -8,6 +8,7 @@ buildscript {
     ext.ktlint_version = "9.2.1"
     ext.mockk_version = "1.9.3"
     ext.detekt_version = "1.7.4"
+    ext.jacoco_version = "0.8.5"
 }
 
 plugins {
@@ -33,6 +34,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:$log4j2_version")
     implementation("org.apache.logging.log4j:log4j-core:$log4j2_version")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spek_version")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spek_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -82,20 +84,13 @@ compileTestKotlin {
     }
 }
 detekt {
-    toolVersion = "$detekt_version"                             // Version of the Detekt CLI that will be used. When unspecified the latest detekt version found will be used. Override to stay on the same version.
-    input = files("src/main/kotlin")    // The directories where detekt looks for source files. Defaults to `files("src/main/java", "src/main/kotlin")`.
-    parallel = false                                      // Builds the AST in parallel. Rules are always executed in parallel. Can lead to speedups in larger projects. `false` by default.
-    config = files("$rootDir/detekt-config.yml")                   // Define the detekt configuration(s) you want to use. Defaults to the default detekt configuration.
-    reports {
-        txt {
-            enabled = true                                // Enable/Disable TXT report (default: true)
-            destination = file("build/reports/detekt.txt") // Path where TXT report will be stored (default: `build/reports/detekt/detekt.txt`)
-        }
-    }
+    toolVersion = "$detekt_version"
+    buildUponDefaultConfig = true
+    config = files("$rootDir/detekt-overrides.yml")
 }
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "$jacoco_version"
     reportsDir = file("$buildDir/reports/jacoco")
 }
 
