@@ -11,6 +11,8 @@ repositories {
     }
 }
 
+archivesBaseName = rootProject.name + "-" + project.name
+
 // fixme must be both in root and in subproject not to throw error
 kotlin {
     dependencies {

@@ -8,6 +8,8 @@ plugins {
 group "ru.kafedrase.authapp"
 version "1.0"
 
+archivesBaseName = rootProject.name + "-" + project.name
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.eclipse.jetty:jetty-server:$jetty_version")
