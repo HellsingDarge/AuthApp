@@ -1,0 +1,38 @@
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+}
+
+group = "ru.kafedrase.authapp"
+version = "1.3.1"
+
+repositories {
+    maven {
+        url = "https://kotlin.bintray.com/kotlinx"
+    }
+}
+
+// fixme must be both in root and in subproject not to throw error
+kotlin {
+    dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxcli_version")
+    }
+}
+
+dependencies {
+    implementation("com.h2database:h2:$h2_version")
+    implementation("org.flywaydb:flyway-core:$flyway_verion")
+    implementation("org.apache.logging.log4j:log4j-api:$log4j2_version")
+    implementation("org.apache.logging.log4j:log4j-core:$log4j2_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spek_version")
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spek_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("io.mockk:mockk:$mockk_version")
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines("spek2")
+    }
+}
