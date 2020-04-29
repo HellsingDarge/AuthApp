@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 group = "ru.kafedrase.authapp"
@@ -13,7 +14,6 @@ repositories {
 
 archivesBaseName = rootProject.name + "-" + project.name
 
-// fixme must be both in root and in subproject not to throw error
 kotlin {
     dependencies {
         implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxcli_version")
