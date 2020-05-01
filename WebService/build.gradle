@@ -17,6 +17,7 @@ configurations {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    // todo jetty-runner is deprecated, use jetty-home instead
     webRunner("org.eclipse.jetty:jetty-runner:$jetty_version")
 }
 
