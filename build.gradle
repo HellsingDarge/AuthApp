@@ -17,6 +17,7 @@ buildscript {
     // web
     ext.jetty_version = "9.4.28.v20200408"
     ext.gretty_version = "3.0.2"
+    ext.guice_version = "4.2.3"
 }
 
 plugins {

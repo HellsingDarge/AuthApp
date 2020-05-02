@@ -16,8 +16,9 @@ configurations {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.google.inject.extensions:guice-servlet:$guice_version")
 
-    // todo jetty-runner is deprecated, use jetty-home instead
+    // todo jetty-runner is deprecated, use jetty-home instead (somehow)
     webRunner("org.eclipse.jetty:jetty-runner:$jetty_version")
 }
 
