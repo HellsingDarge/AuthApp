@@ -1,12 +1,12 @@
 package ru.kafedrase.authapp
 
 import com.google.inject.Singleton
+import java.net.URLEncoder
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.Logger
 import ru.kafedrase.authapp.injectors.InjectLogger
-import java.net.URLEncoder
 
 @Singleton
 class PostListener : HttpServlet() {

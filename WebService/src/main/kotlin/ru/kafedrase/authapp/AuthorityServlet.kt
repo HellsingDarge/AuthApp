@@ -6,7 +6,7 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServlet
 
 @Singleton
-class AuthorityListener : HttpServlet() {
+class AuthorityServlet : HttpServlet() {
     override fun service(req: ServletRequest?, res: ServletResponse?) {
         super.service(req, res)
     }
