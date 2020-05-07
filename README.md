@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/HellsingDarge/AuthApp.svg?branch=master)](https://travis-ci.org/HellsingDarge/AuthApp)  [GiHub Pages](https://hellsingdarge.github.io/AuthApp/)
+[![Build Status](https://travis-ci.org/HellsingDarge/AuthApp.svg?branch=master)](https://travis-ci.org/HellsingDarge/AuthApp)  [GiHub Pages](https://hellsingdarge.github.io/AuthApp/)  [Heroku](https://afternoon-everglades-94429.herokuapp.com/)
 
 A prototype/model authentication app for working with DB, currently bare bones  
 
