@@ -2,16 +2,16 @@ buildscript {
     // common
     ext.kotlin_version = "1.3.72"
     ext.ktlint_version = "9.2.1"
-    ext.detekt_version = "1.7.4"
+    ext.detekt_version = "1.8.0"
     ext.shadowjar_version = "5.2.0"
 
     // cli
     ext.kotlinxcli_version = "0.2.1"
     ext.h2_version = "1.4.200"
-    ext.flyway_verion = "6.3.2"
-    ext.log4j2_version = "2.13.1"
+    ext.flyway_verion = "6.4.1"
+    ext.log4j2_version = "2.13.2"
     ext.spek_version = "2.0.10"
-    ext.mockk_version = "1.9.3"
+    ext.mockk_version = "1.10.0"
     ext.jacoco_version = "0.8.5"
 
     // web
