@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.Logger
 import ru.kafedrase.authapp.injectors.InjectLogger
+import java.net.URLEncoder
 
 @Singleton
 class PostListener : HttpServlet() {
@@ -13,9 +14,15 @@ class PostListener : HttpServlet() {
     lateinit var log: Logger
 
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
-        log.trace("Received query: ${req.queryString}")
         val id = req.getParameter("id-input")
-        resp.sendRedirect("get?id=$id")
+
+        log.trace("Received id: $id")
+
+        val encodedID = URLEncoder.encode(id, "UTF-8") // fails on • (U+2022)
+
+        log.trace("EncodedID: $encodedID")
+
+        resp.sendRedirect("get?id=$encodedID")
     }
 }
 
