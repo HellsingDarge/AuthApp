@@ -18,7 +18,7 @@ class PostListener : HttpServlet() {
 
         log.trace("Received id: $id")
 
-        val encodedID = URLEncoder.encode(id, "UTF-8") // fails on • (U+2022)
+        val encodedID = URLEncoder.encode(id, "UTF-8")
 
         log.trace("EncodedID: $encodedID")
 
