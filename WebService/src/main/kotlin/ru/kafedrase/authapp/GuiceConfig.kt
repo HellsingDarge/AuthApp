@@ -16,6 +16,10 @@ class GuiceConfig : GuiceServletContextListener() {
 
             serve("/echo/post").with(PostListener::class.java)
             serve("/echo/get").with(GetListener::class.java)
+
+            serve("/ajax/user").with(UserListener::class.java)
+            serve("/ajax/authority").with(AuthorityListener::class.java)
+            serve("/ajax/activity").with(ActivityServlet::class.java)
         }
     })
 }
