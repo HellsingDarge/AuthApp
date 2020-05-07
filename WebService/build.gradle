@@ -6,7 +6,7 @@ plugins {
 }
 
 group "ru.kafedrase.authapp"
-version "1.0"
+version "1.1"
 
 archivesBaseName = rootProject.name + "-" + project.name
 
@@ -17,6 +17,9 @@ configurations {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.inject.extensions:guice-servlet:$guice_version")
+
+    implementation("org.apache.logging.log4j:log4j-api:$log4j2_version")
+    implementation("org.apache.logging.log4j:log4j-core:$log4j2_version")
 
     // todo jetty-runner is deprecated, use jetty-home instead (somehow)
     webRunner("org.eclipse.jetty:jetty-runner:$jetty_version")

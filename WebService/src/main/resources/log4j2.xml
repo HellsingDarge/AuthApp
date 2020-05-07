@@ -5,7 +5,7 @@
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
         </Console>
 
-        <RollingRandomAccessFile name="File" fileName="logs/cli-latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingRandomAccessFile name="File" fileName="logs/webservice-latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -13,7 +13,7 @@
             </Policies>
         </RollingRandomAccessFile>
 
-        <RollingRandomAccessFile name="DebugFile" fileName="logs/cli-debug.log" filePattern="logs/cli-debug-%i.log.gz">
+        <RollingRandomAccessFile name="DebugFile" fileName="logs/webservice-debug.log" filePattern="logs/webservice-debug-debug-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
