@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger
 @Retention(AnnotationRetention.RUNTIME)
 annotation class InjectLogger
 
-class Log4j2TypeListener : TypeListener {
+class Log4J2TypeListener : TypeListener {
     override fun <T : Any?> hear(type: TypeLiteral<T>, encounter: TypeEncounter<T>) {
         var cl = type.rawType
 

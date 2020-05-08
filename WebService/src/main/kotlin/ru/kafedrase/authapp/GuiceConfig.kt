@@ -6,13 +6,13 @@ import com.google.inject.matcher.Matchers
 import com.google.inject.servlet.GuiceServletContextListener
 import com.google.inject.servlet.ServletModule
 import javax.servlet.annotation.WebListener
-import ru.kafedrase.authapp.injectors.Log4j2TypeListener
+import ru.kafedrase.authapp.injectors.Log4J2TypeListener
 
 @WebListener
 class GuiceConfig : GuiceServletContextListener() {
     override fun getInjector(): Injector = Guice.createInjector(object : ServletModule() {
         override fun configureServlets() {
-            bindListener(Matchers.any(), Log4j2TypeListener())
+            bindListener(Matchers.any(), Log4J2TypeListener())
 
             serve("/echo/post").with(PostListener::class.java)
             serve("/echo/get").with(GetListener::class.java)
