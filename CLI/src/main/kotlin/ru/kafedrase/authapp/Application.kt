@@ -1,6 +1,5 @@
 package ru.kafedrase.authapp
 
-import java.sql.DriverManager
 import java.time.format.DateTimeParseException
 import org.apache.logging.log4j.LogManager
 import ru.kafedrase.authapp.dao.AccountingDAO
@@ -30,10 +29,7 @@ class Application(private val args: Array<String>) {
             return ExitCode.INVALID_LOGIN_FORMAT
         }
         // todo instead of giving all services admin rights, give each service only the needed one
-        val dbUrl = System.getenv("AuthAppDB_URL")
-        val dbUser = System.getenv("AuthAppDB_USER")
-        val dbPass = System.getenv("AuthAppDB_PASS")
-        val dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPass)
+        val dbConnection = DBWrapper.getConnection()
 
         dbConnection.use {
             val usersCredentialsDAO = AuthenticationDAO(dbConnection)
@@ -113,6 +109,7 @@ class Application(private val args: Array<String>) {
                 return ExitCode.INVALID_ACTIVITY
             }
         }
+
         logger.debug("Completed AAA successfully")
         return ExitCode.SUCCESS
     }

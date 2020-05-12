@@ -23,6 +23,8 @@ kotlin {
 dependencies {
     implementation("com.h2database:h2:$h2_version")
     implementation("org.flywaydb:flyway-core:$flyway_verion")
+    implementation("com.zaxxer:HikariCP:$hikari_version")
+
     implementation("org.apache.logging.log4j:log4j-api:$log4j2_version")
     implementation("org.apache.logging.log4j:log4j-core:$log4j2_version")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")

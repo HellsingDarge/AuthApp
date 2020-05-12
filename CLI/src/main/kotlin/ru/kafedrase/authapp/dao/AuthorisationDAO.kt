@@ -7,8 +7,8 @@ import ru.kafedrase.authapp.domain.UsersResources
 class AuthorisationDAO(private val dbConnection: Connection) {
     fun getResource(login: String, role: Role, nodes: List<String>): UsersResources? {
         // todo simplify logic?
-        // instead of just sending all possible combinations, somehow make it so it's not just reiteration
-        // of all possible parent accesses?
+        //  instead of just sending all possible combinations, somehow make it so it's not just reiteration
+        //  of all possible parent accesses?
         val builder = StringBuilder()
         builder.append(
                 "SELECT * FROM Resources WHERE  login = ? AND role = '${role.name}' AND (resource = ?"
