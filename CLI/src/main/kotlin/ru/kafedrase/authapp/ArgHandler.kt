@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 
-class ArgHandler(args: Array<String>) {
+object ArgHandler {
+    lateinit var arguments: Array<String>
     private val parser = ArgParser("AuthApp.jar", true)
 
     val login: String? by parser.option(
@@ -44,9 +45,9 @@ class ArgHandler(args: Array<String>) {
         description = "Потребляемый объем, целое число"
     )
 
-    init {
+    fun parse() {
         try {
-            parser.parse(args)
+            parser.parse(arguments)
         } catch (ex: IllegalStateException) {
         }
     }

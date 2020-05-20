@@ -37,14 +37,17 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url = "https://kotlin.bintray.com/kotlinx"
+        }
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_13
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_13
     }
 }
 

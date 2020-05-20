@@ -19,6 +19,29 @@ class AuthenticationDAO(private val dbConnection: Connection) {
                 )
             }
         }
+
         return user
+    }
+
+    fun getAllUsers(): List<User> {
+        val query = "SELECT * FROM UsersCredentials"
+        val statement = dbConnection.createStatement()
+        val users = mutableListOf<User>()
+
+        statement.use {
+            val result = it.executeQuery(query)
+
+            while (result.next()) {
+                users.add(
+                    User(
+                        result.getString("login"),
+                        result.getString("hash"),
+                        result.getString("salt")
+                    )
+                )
+            }
+        }
+
+        return users.toList()
     }
 }

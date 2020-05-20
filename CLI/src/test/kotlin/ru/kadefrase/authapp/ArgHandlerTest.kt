@@ -7,7 +7,7 @@ import org.spekframework.spek2.style.gherkin.Feature
 import ru.kafedrase.authapp.ArgHandler
 
 object ArgHandlerTest : Spek({
-    var argHandler = ArgHandler(emptyArray())
+    var argHandler = ArgHandler
 
     Feature("Validating arguments") {
         Scenario("Validating login") {

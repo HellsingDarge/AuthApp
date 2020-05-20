@@ -1,6 +1,8 @@
 package ru.kafedrase.authapp
 
+import com.google.inject.Inject
 import java.time.format.DateTimeParseException
+import javax.sql.DataSource
 import org.apache.logging.log4j.LogManager
 import ru.kafedrase.authapp.dao.AccountingDAO
 import ru.kafedrase.authapp.dao.AuthenticationDAO
@@ -11,13 +13,13 @@ import ru.kafedrase.authapp.services.AccountingService
 import ru.kafedrase.authapp.services.AuthenticationService
 import ru.kafedrase.authapp.services.AuthorisationService
 
-class Application(private val args: Array<String>) {
-    private val argHandler: ArgHandler = ArgHandler(args)
+class Application @Inject constructor(private val dataSource: DataSource) {
+    private val argHandler = ArgHandler
 
     fun run(): ExitCode {
         val logger = LogManager.getLogger()
 
-        logger.debug("Passed arguments: " + args.joinToString(" "))
+        logger.debug("Passed arguments: " + argHandler.arguments.joinToString(" "))
 
         if (argHandler.shouldPrintHelp()) {
             argHandler.printHelp()
@@ -28,11 +30,10 @@ class Application(private val args: Array<String>) {
             logger.error("Received invalid login: ${argHandler.login}")
             return ExitCode.INVALID_LOGIN_FORMAT
         }
-        // todo instead of giving all services admin rights, give each service only the needed one
-        val dbConnection = DBWrapper.getConnection()
 
-        dbConnection.use {
-            val usersCredentialsDAO = AuthenticationDAO(dbConnection)
+        // todo instead of giving all services admin rights, give each service only the needed one
+        dataSource.connection.use { connection ->
+            val usersCredentialsDAO = AuthenticationDAO(connection)
             val authenticationService = AuthenticationService(usersCredentialsDAO)
 
             if (!authenticationService.start(argHandler.login!!)) {
@@ -44,6 +45,7 @@ class Application(private val args: Array<String>) {
                 logger.error("Password didn't match for user: ${argHandler.login}")
                 return ExitCode.WRONG_PASSWORD
             }
+
             if (!argHandler.canAuthorise()) {
                 logger.info("Successfully authenticated user: ${argHandler.login}")
                 return ExitCode.SUCCESS
@@ -53,7 +55,8 @@ class Application(private val args: Array<String>) {
                 logger.error("Received invalid role: ${argHandler.role}")
                 return ExitCode.UNKNOWN_ROLE
             }
-            val authorisationDAO = AuthorisationDAO(dbConnection)
+
+            val authorisationDAO = AuthorisationDAO(connection)
 
             val authorizationService = AuthorisationService(
                     UsersResources(
@@ -69,12 +72,13 @@ class Application(private val args: Array<String>) {
                 logger.error("User \"${argHandler.login}\" with role \"${argHandler.role}\" doesn't have access to resource \"${argHandler.resource}\"")
                 return ExitCode.NO_ACCESS
             }
+
             if (!argHandler.canAccount()) {
                 logger.info("Successfully authorised user")
                 return ExitCode.SUCCESS
             }
 
-            val accountingDAO = AccountingDAO(dbConnection)
+            val accountingDAO = AccountingDAO(connection)
             val accountingService = AccountingService(accountingDAO)
 
             try {

@@ -1,3 +1,10 @@
 package ru.kafedrase.authapp.domain
 
-data class User(val login: String, val hash: String, val salt: String)
+import com.google.gson.annotations.Expose
+
+data class User(
+    @Expose
+    val login: String,
+    val hash: String,
+    val salt: String
+)

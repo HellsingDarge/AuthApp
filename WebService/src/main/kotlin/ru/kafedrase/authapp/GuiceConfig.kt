@@ -21,5 +21,7 @@ class GuiceConfig : GuiceServletContextListener() {
             serve("/ajax/authority").with(AuthorityServlet::class.java)
             serve("/ajax/activity").with(ActivityServlet::class.java)
         }
-    })
+    },
+        DataSourceModule()
+    )
 }
