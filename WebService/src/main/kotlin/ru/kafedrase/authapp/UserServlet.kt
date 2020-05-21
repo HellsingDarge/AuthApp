@@ -51,7 +51,7 @@ class UserServlet : HttpServlet() {
                 resp.sendError(SC_NOT_FOUND)
             } else {
                 val json = gson.get()
-                resp.contentType = "application/json;charset=UTF-8"
+                resp.contentType = "application/json"
                 resp.writer.print(json.toJson(result))
             }
         }
